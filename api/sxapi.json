@@ -1,0 +1,363 @@
+{
+    "name": "sxapi-demo-openshift-api",
+    "description": "API application for the sxapi openshift demo",
+    "version": "0.0.1",
+    "debug": true,
+    "log": {
+        "filters": {
+            "level": "0,1,2,3,4",
+            "type": "debug,info,error,warn"
+        }
+    },
+    "session": {
+        "duration": 3600,
+        "auto_create": true,
+        "transport": {
+            "type": "cookie",
+            "cookie_name": "sxapi-sess"
+        },
+        "backend": {
+            "type": "mysql",
+            "resource": "mysql-api",
+            "table": "session",
+            "sid_field": "token_sess",
+            "id_field": "id_sess",
+            "fields": {
+                "ip": "ip_sess",
+                "start": "start_sess",
+                "stop": "stop_sess"
+            }
+        }
+    },
+    "resources": {
+        "mysql-api": {
+            "_class": "mysql",
+            "type": "mysql",
+            "keepAliveInterval": 60,
+            "server": {
+                "host": "{{{MARIADB_SERVICE_HOST}}}",
+                "port": "3306",
+                "user": "test_api",
+                "password": "startxPmfs56sej5k8oqapi",
+                "database": "startx_api"
+            }
+        },
+        "serviceinfo-api": {
+            "_class": "serviceinfo"
+        },
+        "insee-api": {
+            "_class": "insee"
+        }
+    },
+    "server": {
+        "type": "express",
+        "port": "8080",
+        "bodyParserJson": true,
+        "bodyParserUrl": true,
+        "endpoints": [
+            {
+                "path": "/",
+                "desc": "display API welcome message",
+                "header": {
+                    "Content-Type": "application/json"
+                },
+                "body": "{ \"code: 0,\"message\":\"base tools for startx API\"}"
+            },
+            {
+                "path": "/health",
+                "resource": "serviceinfo-api",
+                "endpoint": "health"
+            },
+            {
+                "path": "/info",
+                "desc": "Display technical informations about this API",
+                "resource": "serviceinfo-api",
+                "endpoint": "info"
+            },
+            {
+                "path": "/ping",
+                "desc": "Ping the application. Return a sample message in text",
+                "code": "200",
+                "body": "pong"
+            },
+            {
+                "path": "/cursus",
+                "desc": "informations about training cursus",
+                "method": "ROUTER",
+                "resource": "mysql-api",
+                "table": "cursus",
+                "id_field": "id_curs",
+                "endpoints": [
+                    {
+                        "path": "/cursus",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT cursus.*, nom_ed, nom_ent, COUNT(DISTINCT id_crs) AS nb_cours_curs, CONCAT(ct1.civ_cont, ' ', ct1.prenom_cont,' ',  ct1.nom_cont) as nom_contact_ed FROM cursus LEFT JOIN editeur ON editeur.id_ed = cursus.editeur_curs  LEFT JOIN entreprise ON editeur.entreprise_ed = entreprise.id_ent LEFT JOIN contact AS ct1 ON editeur.contact_ed = ct1.id_cont LEFT JOIN cours ON cursus.id_curs  = cours.cursus_crs  GROUP BY id_curs ORDER BY nom_curs ASC LIMIT 200"
+                    },
+                    {
+                        "path": "/cursus",
+                        "method": "POST",
+                        "endpoint": "create",
+                        "notification": {
+                            "pipeline": "formation-sqs",
+                            "event": "cursus:create"
+                        }
+                    },
+                    {
+                        "path": "/cursus/:id",
+                        "method": "GET",
+                        "endpoint": "readOne",
+                        "sql": "SELECT cursus.*, nom_ed, nom_ent, COUNT(DISTINCT id_crs) AS nb_cours_curs, CONCAT(ct1.civ_cont, ' ', ct1.prenom_cont,' ',  ct1.nom_cont) as nom_contact_ed FROM cursus LEFT JOIN editeur ON editeur.id_ed = cursus.editeur_curs  LEFT JOIN entreprise ON editeur.entreprise_ed = entreprise.id_ent LEFT JOIN contact AS ct1 ON editeur.contact_ed = ct1.id_cont LEFT JOIN cours ON cursus.id_curs  = cours.cursus_crs WHERE id_curs = '{{id}}' GROUP BY id_curs ORDER BY nom_curs ASC LIMIT 1"
+                    },
+                    {
+                        "path": "/cursus/:id",
+                        "method": "PUT",
+                        "endpoint": "update",
+                        "notification": {
+                            "pipeline": "formation-sqs",
+                            "event": "cursus:update"
+                        }
+                    },
+                    {
+                        "path": "/cursus/:id",
+                        "method": "DELETE",
+                        "endpoint": "delete",
+                        "notification": {
+                            "pipeline": "formation-sqs",
+                            "event": "cursus:delete"
+                        }
+                    }
+                ]
+            },
+            {
+                "path": "/ref",
+                "desc": "References section with various Read-only endpoints to get stable data",
+                "method": "ROUTER",
+                "resource": "mysql-api",
+                "endpoints": [
+                    {
+                        "path": "/ref/produit_familles",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_prodfam AS id, nom_prodfam AS name, treePathKey AS code FROM ref_prodfamille ORDER BY code ASC LIMIT 200"
+                    },
+                    {
+                        "path": "/ref/produit_architectures",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_arch AS id, nom_arch AS name FROM ref_redhat_archi WHERE actif_arch IN (1, '1') ORDER BY name ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/produit_architectures/all",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_arch AS id, nom_arch AS name FROM ref_redhat_archi ORDER BY name ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/produit_contrats",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_cont AS id, nom_cont AS name FROM ref_redhat_contrat ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/produit_renouvellements",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_refrnw AS id, nom_refrnw AS name FROM ref_renewperiode ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/reglement_condition",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_condreg AS id, nom_condreg AS name FROM ref_condireglement ORDER BY id ASC LIMIT 20"
+                    },
+                    {
+                        "path": "/ref/reglement_mode",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_modereg AS id, nom_modereg AS name FROM ref_modereglement ORDER BY id ASC LIMIT 10"
+                    },
+                    {
+                        "path": "/ref/taux_tva",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_tva AS id, nom_tva AS name FROM ref_tauxtva ORDER BY id ASC LIMIT 100"
+                    },
+                    {
+                        "path": "/ref/client_departement",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_dep AS id, nom_dep AS name FROM ref_departement ORDER BY id ASC LIMIT 200"
+                    },
+                    {
+                        "path": "/ref/client_civ",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT DISTINCT `civ_cont` AS id, civ_cont as name FROM `contact`  WHERE civ_cont IS NOT NULL ORDER BY id ASC LIMIT 5"
+                    },
+                    {
+                        "path": "/ref/client_fonction",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_fct AS id, nom_fct AS name FROM ref_fonction ORDER BY id ASC LIMIT 100"
+                    },
+                    {
+                        "path": "/ref/client_pays",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_pays AS id, nom_pays AS name, code_pays AS code FROM ref_pays ORDER BY id ASC LIMIT 300"
+                    },
+                    {
+                        "path": "/ref/client_type",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_tyent AS id, nom_tyent AS name FROM ref_typeentreprise ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/client_activite",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_act AS id, nom_act AS name FROM ref_activite ORDER BY id ASC LIMIT 100"
+                    },
+                    {
+                        "path": "/ref/user_droit",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_dt AS id, nom_dt AS name, desc_dt AS description FROM ref_droit ORDER BY id ASC LIMIT 200"
+                    },
+                    {
+                        "path": "/ref/user_acl",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_du AS id, desc_du AS name FROM ref_droit_user ORDER BY id ASC LIMIT 100"
+                    },
+                    {
+                        "path": "/ref/status_affaire",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_staff AS id, nom_staff AS name, score_staff AS score, color_staff AS color FROM ref_statusaffaire ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/status_commande",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_stcmd AS id, nom_stcmd AS name, pourcent_stcmd AS score, color_stcmd AS color FROM ref_statuscommande ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/status_devis",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_stdev AS id, nom_stdev AS name, score_stdev AS score, color_stdev AS color FROM ref_statusdevis ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/status_facture",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_stfact AS id, nom_stfact AS name, pourcent_stfact AS score, color_stfact AS color FROM ref_statusfacture ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/status_facturefournisseur",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_stfactfourn AS id, nom_stfactfourn AS name, pourcent_stfactfourn AS score, color_stfactfourn AS color FROM ref_statusfacturefournisseur ORDER BY id ASC LIMIT 50"
+                    },
+                    {
+                        "path": "/ref/affaire_type",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT id_typro AS id, nom_typro AS name, score_typro AS score FROM ref_typeproj ORDER BY id ASC LIMIT 50"
+                    }
+                ]
+            },
+            {
+                "path": "/insee",
+                "desc": "Check for insee informations",
+                "method": "ROUTER",
+                "resource": "insee-api",
+                "endpoints": [
+                    {
+                        "path": "/insee/:id",
+                        "method": "GET",
+                        "endpoint": "read"
+                    },
+                    {
+                        "path": "/insee/:id/tva",
+                        "method": "GET",
+                        "endpoint": "siret2Tva"
+                    },
+                    {
+                        "path": "/insee/:id/siren",
+                        "method": "GET",
+                        "endpoint": "tva2Siren"
+                    }
+                ]
+            },
+            {
+                "path": "/entreprises",
+                "desc": "Enterprise section for managing corporate customers",
+                "method": "ROUTER",
+                "resource": "mysql-api",
+                "table": "entreprise",
+                "id_field": "id_ent",
+                "endpoints": [
+                    {
+                        "path": "/entreprises/_search",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT * FROM `entreprise` WHERE id_ent='{{id}}' LIMIT 1"
+                    },
+                    {
+                        "path": "/entreprises/_search/id/:id",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT * FROM `entreprise` WHERE id_ent='{{id}}' LIMIT 1"
+                    },
+                    {
+                        "path": "/entreprises/_search/nom/:nom",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT * FROM `entreprise` WHERE nom_ent LIKE '%{{nom}}%' LIMIT 50"
+                    },
+                    {
+                        "path": "/entreprises",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT entreprise.*, nom_tyent, icon_tyent, nom_act, COUNT(DISTINCT id_cont) AS nb_contacts_ent FROM `entreprise` LEFT JOIN ref_typeentreprise ON ref_typeentreprise.id_tyent = entreprise.type_ent LEFT JOIN ref_activite ON ref_activite.id_act = entreprise.activite_ent LEFT JOIN contact ON contact.entreprise_cont = entreprise.id_ent {{#id}} WHERE id_ent='{{id}}'{{/id}} GROUP BY id_ent ORDER BY nom_ent ASC LIMIT 200"
+                    },
+                    {
+                        "path": "/entreprise",
+                        "method": "POST",
+                        "endpoint": "create",
+                        "notification": {
+                            "pipeline": "infra-sqs",
+                            "event": "entreprise:create"
+                        }
+                    },
+                    {
+                        "path": "/entreprise/:id",
+                        "method": "GET",
+                        "endpoint": "readOne"
+                    },
+                    {
+                        "path": "/entreprise/:id",
+                        "method": "PUT",
+                        "endpoint": "update",
+                        "notification": {
+                            "pipeline": "infra-sqs",
+                            "event": "entreprise:update"
+                        }
+                    },
+                    {
+                        "path": "/entreprise/:id",
+                        "method": "DELETE",
+                        "endpoint": "delete",
+                        "notification": {
+                            "pipeline": "infra-sqs",
+                            "event": "entreprise:delete"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

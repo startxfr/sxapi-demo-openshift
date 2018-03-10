@@ -1,0 +1,17 @@
+{
+  "name": "sxapi-demo-openshift-api",
+  "description": "API application for the sxapi openshift demo",
+  "version": "0.0.1",
+  "author": "startx",
+  "license": "GPL-3.0-or-later",
+  "private": false,
+  "debug": true,
+  "analyze": true,
+  "dependencies": {
+    "sxapi-core": "~0.1.14"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "app.js"
+}
