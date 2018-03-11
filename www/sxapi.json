@@ -18,7 +18,7 @@
         "type": "express",
         "port": "8080",
         "static": true,
-        "static_path": "/static",
+        "static_path": "/",
         "static_dir": "/static",
         "bodyParserJson": true,
         "bodyParserUrl": true,
