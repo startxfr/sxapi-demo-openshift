@@ -378,55 +378,40 @@
         {
             "name": "APP_TYPE",
             "displayName": "Application type",
-            "description": "The type of the created application",
+            "description": "The type of the created application (used for grouping)",
             "value": "frontend"
         },
         {
             "name": "SOURCE_GIT",
-            "displayName": "Source repository",
+            "displayName": "Application source-code repository",
             "description": "URL to the source code to use during build process",
             "value": "https://github.com/startxfr/sxapi-demo-openshift.git",
             "required": true
         },
         {
             "name": "SOURCE_BRANCH",
-            "displayName": "Source branch",
-            "description": "Name of the default branch",
+            "displayName": "Application source-code branch",
+            "description": "Name of the branch to use for building this application",
             "value": "dev",
             "required": true
         },
         {
             "name": "SOURCE_CONTEXT",
-            "displayName": "Source directory context",
+            "displayName": "Application source-code directory context",
             "description": "Name of the source directory where application code reside",
             "value": "www",
             "required": true
         },
         {
-            "name": "WEBHOOK_TOKEN",
-            "displayName": "Webhook token",
-            "description": "Secret token to use for webhook to github or generic",
-            "generate": "expression",
-            "from": "[a-zA-Z0-9]{24}",
-            "required": true
-        },
-        {
-            "name": "MEMORY_LIMIT",
-            "displayName": "Memory Limit",
-            "description": "Maximum amount of memory the container can use.",
-            "value": "128Mi",
-            "required": true
-        },
-        {
             "name": "BASE_IMAGE_NS",
             "displayName": "Base image namespace",
-            "description": "Image namespace in docker repository where base image reside. ",
+            "description": "Image namespace in docker repository where the build image reside. (if not in local repository, should look for dockerhub namespace)",
             "value": "startx",
             "required": true
         },
         {
             "name": "BASE_IMAGE",
-            "displayName": "Base image",
+            "displayName": "Base image name",
             "description": "Base image to use for buidling this application",
             "value": "sv-nodejs",
             "required": true
@@ -434,8 +419,23 @@
         {
             "name": "BASE_IMAGE_TAG",
             "displayName": "Base image tag",
-            "description": "Base image tag (or release) to use for buidling this application",
+            "description": "Base image tag (release, flavour) to use for buidling this application",
             "value": "latest",
+            "required": true
+        },
+        {
+            "name": "WEBHOOK_TOKEN",
+            "displayName": "Webhook token",
+            "description": "Secret token to use in github, gitlab or other to hook build action when code change",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{24}",
+            "required": true
+        },
+        {
+            "name": "MEMORY_LIMIT",
+            "displayName": "Memory Limit",
+            "description": "Maximum amount of memory the application can use.",
+            "value": "128Mi",
             "required": true
         }
     ]
