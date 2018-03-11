@@ -219,7 +219,7 @@
                     "rollingParams": {
                         "updatePeriodSeconds": 1,
                         "intervalSeconds": 1,
-                        "timeoutSeconds": 45,
+                        "timeoutSeconds": 90,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
                     },
