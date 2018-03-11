@@ -93,6 +93,22 @@ CREATE TABLE `session` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+CREATE TABLE IF NOT EXISTS `ref_pays` (
+  `id_pays` tinyint(3) unsigned NOT NULL auto_increment,
+  `nom_pays` varchar(80) NOT NULL,
+  `code_pays` char(3) NOT NULL,
+  PRIMARY KEY  (`id_pays`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=238 ;
+
+
+CREATE TABLE IF NOT EXISTS `ref_departement` (
+  `id_dep` varchar(4) NOT NULL,
+  `nom_dep` varchar(128) NOT NULL,
+  `prefecture_dep` varchar(128) NOT NULL,
+  `region_dep` varchar(128) NOT NULL,
+  PRIMARY KEY  (`id_dep`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Dumping events for database 'dev_api'
 --

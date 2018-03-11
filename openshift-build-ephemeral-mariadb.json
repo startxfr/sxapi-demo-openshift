@@ -25,7 +25,7 @@
             "metadata": {
                 "name": "startx-sv-mariadb",
                 "annotations": {
-                    "openshift.io/display-name": "Startx Mariadb Database (S2I)",
+                    "openshift.io/display-name": "Base image ${BASE_IMAGE}",
                     "openshift.io/generated-by": "STARTX"
                 },
                 "labels": {
@@ -40,17 +40,15 @@
                     {
                         "name": "latest",
                         "annotations": {
-                            "openshift.io/display-name": "S2I Mariadb Database (Fedora rawhide)",
-                            "description": "MariaDB server builder for simple SQL database running under Fedora rawhide",
+                            "openshift.io/display-name": "Base image for ${APP_NAME} (${BASE_IMAGE})",
+                            "description": "SXAPI base image for building ${APP_NAME} application. ",
                             "iconClass": "icon-mariadb",
-                            "tags": "builder,startx,fedora,mariadb,database",
-                            "supports": "db",
-                            "version": "rawhide",
+                            "version": "${BASE_IMAGE_TAG}",
                             "sampleRepo": "https://github.com/startxfr/docker-images-example-mariadb.git"
                         },
                         "from": {
                             "kind": "DockerImage",
-                            "name": "startx/sv-mariadb:latest"
+                            "name": "${BASE_IMAGE_NS}/${BASE_IMAGE}:${BASE_IMAGE_TAG}"
                         }
                     }
                 ]
@@ -476,7 +474,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql user",
             "description": "Default user to create",
-            "value": "test_api",
+            "value": "demouser",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -485,7 +483,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Password of the default user",
-            "value": "startxPmfs56sej5k8oqapi",
+            "value": "demopwd",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true
@@ -494,7 +492,7 @@
             "name": "MYSQL_DATABASE",
             "displayName": "Mysql database",
             "description": "name of the default database to create",
-            "value": "startx_api",
+            "value": "demodb",
             "required": true
         },
         {
@@ -502,6 +500,27 @@
             "displayName": "Memory Limit",
             "description": "Maximum amount of memory the container can use.",
             "value": "512Mi",
+            "required": true
+        },
+        {
+            "name": "BASE_IMAGE_NS",
+            "displayName": "Base image namespace",
+            "description": "Image namespace in docker repository where base image reside. ",
+            "value": "startx",
+            "required": true
+        },
+        {
+            "name": "BASE_IMAGE",
+            "displayName": "Base image",
+            "description": "Base image to use for buidling this application",
+            "value": "sv-mariadb",
+            "required": true
+        },
+        {
+            "name": "BASE_IMAGE_TAG",
+            "displayName": "Base image tag",
+            "description": "Base image tag (or release) to use for buidling this application",
+            "value": "latest",
             "required": true
         }
     ]
