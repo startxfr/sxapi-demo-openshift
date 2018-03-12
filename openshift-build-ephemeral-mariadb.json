@@ -445,7 +445,7 @@
             "name": "SOURCE_BRANCH",
             "displayName": "Application source-code branch",
             "description": "Name of the branch to use for building this application",
-            "value": "dev",
+            "value": "test",
             "required": true
         },
         {
@@ -473,7 +473,7 @@
             "name": "BASE_IMAGE_TAG",
             "displayName": "Base image tag",
             "description": "Base image tag (release, flavour) to use for buidling this application",
-            "value": "latest",
+            "value": "centos7",
             "required": true
         },
         {
@@ -496,7 +496,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql user",
             "description": "Default user to create",
-            "value": "dev-user",
+            "value": "test-user",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -505,7 +505,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Password of the default user",
-            "value": "dev-pwd123",
+            "value": "test-pwd123",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true

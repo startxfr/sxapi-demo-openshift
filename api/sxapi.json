@@ -1,7 +1,7 @@
 {
-    "name": "sxapi-demo-openshift-dev-api",
-    "description": "API application for the sxapi openshift demo (dev)",
-    "version": "0.0.10",
+    "name": "sxapi-demo-openshift-test-api",
+    "description": "API application for the sxapi openshift demo (test)",
+    "version": "0.0.11",
     "debug": true,
     "log": {
         "filters": {
@@ -37,8 +37,8 @@
             "server": {
                 "host": "{{{MARIADB_SERVICE_HOST}}}",
                 "port": "3306",
-                "user": "dev-user",
-                "password": "dev-pwd123",
+                "user": "test-user",
+                "password": "test-pwd123",
                 "database": "demo"
             }
         },
