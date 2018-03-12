@@ -162,15 +162,6 @@
                             {
                                 "name": "SX_VERBOSE",
                                 "value": "true"
-                            },
-                            {
-                                "name": "DEMO_API",
-                                "valueFrom": {
-                                    "secretKeyRef": {
-                                        "name": "${APP_NAME}",
-                                        "key": "DEMO_API"
-                                    }
-                                }
                             }
                         ]
                     }
@@ -230,7 +221,7 @@
                         "type": "ConfigChange"
                     }
                 ],
-                "replicas": 1,
+                "replicas": 2,
                 "test": false,
                 "selector": {
                     "app": "${APP_NAME}",
