@@ -6,7 +6,6 @@
         "annotations": {
             "openshift.io/display-name": "SXAPI Demo - Mariadb",
             "description": "Template for building mariadb database used in the sxapi openshift demo",
-            "description": "SXAPI Demo database backend",
             "iconClass": "icon-mariadb",
             "tags": "startx,db,database,backend",
             "openshift.io/provider-display-name": "STARTX",
