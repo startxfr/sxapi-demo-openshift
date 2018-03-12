@@ -5,8 +5,21 @@ app = {
     apiUrl: "http://api-test.apps.startx.fr/"
   },
   init: function () {
-    app.sirenConvert.init();
+    $.ajax({method: "GET", url: "/info"})
+    .always(function (response, status) {
+      if (status === "success" && response.code === "ok") {
+        console.log(response);
+        appContainer
+        $("#appContainer").text(response.data.server.hostname);
+        $("#appRelease").html(response.data.service.version + " <span style='color:grey'>via " + response.data.server.hostname+"</span>");
+      }
+      else {
+        console.error(response.data || response);
+      }
+    });
     app.api.init();
+    app.sirenConvert.init();
+    app.tvaConvert.init();
   },
   api: {
     info: null,
@@ -19,7 +32,8 @@ app = {
         }
         else {
           app.api.info = response;
-          $("#appRelease").text(app.api.info.service.version);
+        $("#appSvContainer").text(app.api.info.server.hostname);
+          $("#appSvRelease").html(app.api.info.service.version + " <span style='color:grey'>via " + app.api.info.server.hostname+"</span>");
           var message = "vous êtes connecté à l'API <b>" +
           app.api.info.service.name +
           "</b> servi depuis le container <b>" +
@@ -86,9 +100,44 @@ app = {
         $this.msgNokEl.show();
       }
       else {
-
-
         app.api.get("insee/" + $this.inputEl.val() + "/tva", null, function (error, response) {
+          console.error(error, response);
+          if (error) {
+            $this.msgNokEl.show();
+            console.error(error);
+          }
+          else {
+            console.log(response);
+            $("b", $this.msgOkEl).text(response);
+            $this.msgOkEl.show();
+          }
+        });
+      }
+    }
+  },
+  tvaConvert: {
+    inputEl: null,
+    btnEl: null,
+    msgOkEl: null,
+    msgNokEl: null,
+    init: function () {
+      this.inputEl = $("#tvaConvertInputTva");
+      this.btnEl = $("#tvaConvertBtn");
+      this.msgOkEl = $("#tvaConvertSucessMessage");
+      this.msgNokEl = $("#tvaConvertErrorMessage");
+      this.msgOkEl.removeClass("hidden").hide();
+      this.msgNokEl.removeClass("hidden").hide();
+      this.btnEl.click(this.onClickConvert);
+    },
+    onClickConvert: function () {
+      var $this = app.tvaConvert;
+      $this.msgOkEl.hide();
+      $this.msgNokEl.hide();
+      if ($this.inputEl.val().length === 0) {
+        $this.msgNokEl.show();
+      }
+      else {
+        app.api.get("insee/" + $this.inputEl.val() + "/siren", null, function (error, response) {
           console.error(error, response);
           if (error) {
             $this.msgNokEl.show();
