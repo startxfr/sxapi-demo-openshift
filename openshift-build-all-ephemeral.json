@@ -1146,7 +1146,7 @@
             "name": "MYSQL_DATABASE",
             "displayName": "Mysql database",
             "description": "name of the default database to create",
-            "value": "demo-dev",
+            "value": "demo",
             "required": true
         }
     ]

@@ -39,7 +39,7 @@
                 "port": "3306",
                 "user": "dev-user",
                 "password": "dev-pwd123",
-                "database": "demo-dev"
+                "database": "demo"
             }
         },
         "serviceinfo-api": {
