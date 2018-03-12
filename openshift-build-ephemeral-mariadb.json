@@ -218,7 +218,7 @@
                     "rollingParams": {
                         "updatePeriodSeconds": 1,
                         "intervalSeconds": 1,
-                        "timeoutSeconds": 90,
+                        "timeoutSeconds": 40,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
                     },
@@ -337,9 +337,9 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 30,
+                                    "initialDelaySeconds": 10,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -350,8 +350,8 @@
                                             "isReady"
                                         ]
                                     },
-                                    "initialDelaySeconds": 30,
-                                    "timeoutSeconds": 1,
+                                    "initialDelaySeconds": 15,
+                                    "timeoutSeconds": 2,
                                     "periodSeconds": 20,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
