@@ -1,12 +1,12 @@
 {
-    "name": "sxapi-demo-openshift-test-api",
-    "description": "API application for the sxapi openshift demo (test)",
+    "name": "sxapi-demo-openshift-prod-api",
+    "description": "API application for the sxapi openshift demo (prod)",
     "version": "0.0.11",
-    "debug": true,
+    "debug": false,
     "log": {
         "filters": {
-            "level": "0,1,2,3,4",
-            "type": "debug,info,error,warn"
+            "level": "0,1,2",
+            "type": "info,error,warn"
         }
     },
     "session": {
@@ -37,8 +37,8 @@
             "server": {
                 "host": "{{{MARIADB_SERVICE_HOST}}}",
                 "port": "3306",
-                "user": "test-user",
-                "password": "test-pwd123",
+                "user": "demo-user",
+                "password": "fu8z6D91Hvzm7F9J6pq82",
                 "database": "demo"
             }
         },
@@ -61,7 +61,7 @@
                 "header": {
                     "Content-Type": "application/json"
                 },
-                "body": "{ \"code: 0,\"message\":\"API application for the sxapi openshift demo (dev)\"}"
+                "body": "{ \"code: 0,\"message\":\"API application for the sxapi openshift demo (prod)\"}"
             },
             {
                 "path": "/health",

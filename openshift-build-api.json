@@ -144,7 +144,7 @@
                         "env": [
                             {
                                 "name": "SX_VERBOSE",
-                                "value": "true"
+                                "value": "false"
                             }
                         ]
                     }
@@ -231,11 +231,11 @@
                                 "env": [
                                     {
                                         "name": "SX_VERBOSE",
-                                        "value": "true"
+                                        "value": "false"
                                     },
                                     {
                                         "name": "SX_DEBUG",
-                                        "value": "true"
+                                        "value": "false"
                                     }
                                 ],
                                 "command": [
@@ -394,7 +394,7 @@
             "name": "SOURCE_BRANCH",
             "displayName": "Application source-code branch",
             "description": "Name of the branch to use for building this application",
-            "value": "test",
+            "value": "prod",
             "required": true
         },
         {

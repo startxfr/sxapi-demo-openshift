@@ -259,11 +259,11 @@
                         "env": [
                             {
                                 "name": "SX_VERBOSE",
-                                "value": "true"
+                                "value": "false"
                             },
                             {
                                 "name": "SX_DEBUG",
-                                "value": "true"
+                                "value": "false"
                             },
                             {
                                 "name": "MYSQL_ROOT_PASSWORD",
@@ -349,7 +349,7 @@
                         "env": [
                             {
                                 "name": "SX_VERBOSE",
-                                "value": "true"
+                                "value": "false"
                             }
                         ]
                     }
@@ -419,7 +419,7 @@
                         "env": [
                             {
                                 "name": "SX_VERBOSE",
-                                "value": "true"
+                                "value": "false"
                             }
                         ]
                     }
@@ -506,11 +506,11 @@
                                 "env": [
                                     {
                                         "name": "SX_VERBOSE",
-                                        "value": "true"
+                                        "value": "false"
                                     },
                                     {
                                         "name": "SX_DEBUG",
-                                        "value": "true"
+                                        "value": "false"
                                     },
                                     {
                                         "name": "MYSQL_ROOT_PASSWORD",
@@ -692,11 +692,11 @@
                                 "env": [
                                     {
                                         "name": "SX_VERBOSE",
-                                        "value": "true"
+                                        "value": "false"
                                     },
                                     {
                                         "name": "SX_DEBUG",
-                                        "value": "true"
+                                        "value": "false"
                                     }
                                 ],
                                 "command": [
@@ -832,11 +832,11 @@
                                 "env": [
                                     {
                                         "name": "SX_VERBOSE",
-                                        "value": "true"
+                                        "value": "false"
                                     },
                                     {
                                         "name": "SX_DEBUG",
-                                        "value": "true"
+                                        "value": "false"
                                     },
                                     {
                                         "name": "DEMO_API",
@@ -1091,7 +1091,7 @@
             "name": "SOURCE_BRANCH",
             "displayName": "Application source-code branch",
             "description": "Name of the branch to use for building this application (dev, test, prod)",
-            "value": "test",
+            "value": "prod",
             "required": true
         },
         {
@@ -1105,7 +1105,7 @@
             "name": "DEMO_API",
             "displayName": "API fqdn",
             "description": "Domain name of the API endpoint to use in this frontend (api-xxxxx.apps.startx.fr were xxxxx is your project namespace)",
-            "value": "api-test-demo.apps.startx.fr",
+            "value": "api-prod-demo.apps.startx.fr",
             "required": true
         },
         {
@@ -1128,7 +1128,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql application user",
             "description": "Database user to create",
-            "value": "test-user",
+            "value": "demo-user",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -1137,7 +1137,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Database password of the application user",
-            "value": "test-pwd123",
+            "value": "fu8z6D91Hvzm7F9J6pq82",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true

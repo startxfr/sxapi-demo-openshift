@@ -6,8 +6,8 @@
   "homepage": "https://github.com/startxfr/sxapi-core",
   "license": "GPL-3.0-or-later",
   "private": false,
-  "debug": true,
-  "analyze": true,
+  "debug": false,
+  "analyze": false,
   "dependencies": {
     "sxapi-core": "~0.1.17"
   },
