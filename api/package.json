@@ -1,8 +1,9 @@
 {
-  "name": "sxapi-demo-openshift-api",
-  "description": "API application for the sxapi openshift demo",
-  "version": "0.0.9",
-  "author": "startx",
+  "name": "sxapi-core",
+  "version": "0.1.17",
+  "description": "sxapi-core is an simple and extensible framework for building microservices API using javascript technologies",
+  "author": "STARTX <dev+sxapi_core@startx.fr>",
+  "homepage": "https://github.com/startxfr/sxapi-core",
   "license": "GPL-3.0-or-later",
   "private": false,
   "debug": true,

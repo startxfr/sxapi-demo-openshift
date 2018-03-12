@@ -455,7 +455,7 @@
             "name": "DEMO_API",
             "displayName": "API base URL",
             "description": "Domain name of the API endpoint to use in this frontend",
-            "value": "api-test.apps.startx.fr",
+            "value": "api-dev-demo.apps.startx.fr",
             "required": true
         },
         {

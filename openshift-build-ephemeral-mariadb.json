@@ -496,7 +496,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql user",
             "description": "Default user to create",
-            "value": "demouser",
+            "value": "dev-user",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -505,7 +505,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Password of the default user",
-            "value": "demopwd",
+            "value": "dev-pwd123",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true
@@ -514,7 +514,7 @@
             "name": "MYSQL_DATABASE",
             "displayName": "Mysql database",
             "description": "name of the default database to create",
-            "value": "demodb",
+            "value": "demo-dev",
             "required": true
         },
         {

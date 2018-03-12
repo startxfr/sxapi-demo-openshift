@@ -1,7 +1,7 @@
 {
-    "name": "sxapi-demo-openshift-api",
-    "description": "API application for the sxapi openshift demo",
-    "version": "0.0.9",
+    "name": "sxapi-demo-openshift-dev-api",
+    "description": "API application for the sxapi openshift demo (dev)",
+    "version": "0.0.10",
     "debug": true,
     "log": {
         "filters": {
@@ -37,9 +37,9 @@
             "server": {
                 "host": "{{{MARIADB_SERVICE_HOST}}}",
                 "port": "3306",
-                "user": "demouser",
-                "password": "demopwd",
-                "database": "demodb"
+                "user": "dev-user",
+                "password": "dev-pwd123",
+                "database": "demo-dev"
             }
         },
         "serviceinfo-api": {
@@ -61,7 +61,7 @@
                 "header": {
                     "Content-Type": "application/json"
                 },
-                "body": "{ \"code: 0,\"message\":\"base tools for startx API\"}"
+                "body": "{ \"code: 0,\"message\":\"API application for the sxapi openshift demo (dev)\"}"
             },
             {
                 "path": "/health",
@@ -94,6 +94,20 @@
                         "method": "GET",
                         "endpoint": "list",
                         "sql": "SELECT * FROM session ORDER BY  date_sess DESC LIMIT 200"
+                    }
+                ]
+            },
+            {
+                "path": "/sessions",
+                "desc": "List informations about users sessions",
+                "method": "ROUTER",
+                "resource": "mysql-api",
+                "endpoints": [
+                    {
+                        "path": "/sessions",
+                        "method": "GET",
+                        "endpoint": "list",
+                        "sql": "SELECT * FROM session ORDER BY date_sess DESC  LIMIT 50"
                     }
                 ]
             },
