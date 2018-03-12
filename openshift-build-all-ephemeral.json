@@ -22,15 +22,15 @@
             "kind": "ImageStream",
             "apiVersion": "v1",
             "metadata": {
-                "name": "startx-sv-mariadb",
+                "name": "startx-${BASE_IMAGE_TAG}",
                 "annotations": {
-                    "openshift.io/display-name": "Base image ${BASE_IMAGE}",
+                    "openshift.io/display-name": "Base images startx (${BASE_IMAGE_TAG})",
                     "openshift.io/generated-by": "STARTX"
                 },
                 "labels": {
-                    "base-image": "startx-sv-mariadb",
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "base-image": "startx-${BASE_IMAGE_TAG}",
+                    "app": "mariadb",
+                    "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
                 }
@@ -38,17 +38,31 @@
             "spec": {
                 "tags": [
                     {
-                        "name": "latest",
+                        "name": "mariadb",
                         "annotations": {
-                            "openshift.io/display-name": "Base image for ${APP_NAME} (${BASE_IMAGE})",
-                            "description": "SXAPI base image for building ${APP_NAME} application. ",
+                            "openshift.io/display-name": "MariaDB base image (${BASE_IMAGE_TAG})",
+                            "description": "MariaDB base image relying on ${BASE_IMAGE_TAG} and based on startx/mariadb docker image",
                             "iconClass": "icon-mariadb",
                             "version": "${BASE_IMAGE_TAG}",
                             "sampleRepo": "https://github.com/startxfr/docker-images-example-mariadb.git"
                         },
                         "from": {
                             "kind": "DockerImage",
-                            "name": "${BASE_IMAGE_NS}/${BASE_IMAGE}:${BASE_IMAGE_TAG}"
+                            "name": "startx/sv-mariadb:${BASE_IMAGE_TAG}"
+                        }
+                    },
+                    {
+                        "name": "nodejs",
+                        "annotations": {
+                            "openshift.io/display-name": "NodeJS base image (${BASE_IMAGE_TAG})",
+                            "description": "NodeJS base image relying on ${BASE_IMAGE_TAG} and based on startx/nodejs docker image",
+                            "iconClass": "icon-nodejs",
+                            "version": "${BASE_IMAGE_TAG}",
+                            "sampleRepo": "https://github.com/startxfr/docker-images-example-nodejs.git"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "startx/sv-nodejs:${BASE_IMAGE_TAG}"
                         }
                     }
                 ]
@@ -58,15 +72,15 @@
             "kind": "ImageStream",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "mariadb",
                 "annotations": {
-                    "openshift.io/display-name": "SXAPI Demo ${APP_NAME}",
+                    "openshift.io/display-name": "SXAPI Demo - MariaDB",
                     "openshift.io/generated-by": "STARTX"
                 },
                 "labels": {
-                    "base-image": "startx-sv-mariadb",
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "base-image": "startx-${BASE_IMAGE_TAG}-mariadb",
+                    "app": "mariadb",
+                    "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
                 }
@@ -76,11 +90,77 @@
                     {
                         "name": "latest",
                         "annotations": {
-                            "openshift.io/display-name": "${APP_NAME} (mariadb)",
-                            "description": "Database ${APP_NAME} (mariadb)",
+                            "openshift.io/display-name": "SXAPI Demo - MariaDB",
+                            "description": "MariaDB database for the SXAPI Demo",
                             "iconClass": "icon-mariadb",
-                            "tags": "startx,mariadb,db,database,${APP_NAME}",
+                            "tags": "startx,mariadb,db,database,mariadb",
                             "supports": "mysql,mariadb",
+                            "version": "latest"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api",
+                "annotations": {
+                    "openshift.io/display-name": "SXAPI Demo - API",
+                    "openshift.io/generated-by": "STARTX"
+                },
+                "labels": {
+                    "base-image": "startx-${BASE_IMAGE_TAG}-nodejs",
+                    "app": "api",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                }
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "latest",
+                        "annotations": {
+                            "openshift.io/display-name": "SXAPI Demo - API",
+                            "description": "NodeJS API frontend for the SXAPI Demo",
+                            "iconClass": "icon-nodejs",
+                            "tags": "startx,nodejs,frontend,api,api",
+                            "supports": "http,nodejs",
+                            "version": "latest"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www",
+                "annotations": {
+                    "openshift.io/display-name": "SXAPI Demo - WWW",
+                    "openshift.io/generated-by": "STARTX"
+                },
+                "labels": {
+                    "base-image": "startx-${BASE_IMAGE_TAG}-nodejs",
+                    "app": "www",
+                    "type": "backend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                }
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "latest",
+                        "annotations": {
+                            "openshift.io/display-name": "SXAPI Demo - WWW",
+                            "description": "NodeJS Web frontend for the SXAPI Demo",
+                            "iconClass": "icon-nodejs",
+                            "tags": "startx,nodejs,frontend,www",
+                            "supports": "http,nodejs",
                             "version": "latest"
                         }
                     }
@@ -91,11 +171,11 @@
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "mariadb",
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "mariadb",
+                    "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
                 }
@@ -107,13 +187,30 @@
             }
         },
         {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "www",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                }
+            },
+            "stringData": {
+                "DEMO_API": "${DEMO_API}"
+            }
+        },
+        {
             "kind": "BuildConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "mariadb",
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "mariadb",
+                    "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
                 },
@@ -147,17 +244,17 @@
                 "source": {
                     "type": "Git",
                     "git": {
-                        "uri": "${SOURCE_GIT}",
+                        "uri": "https://github.com/startxfr/sxapi-demo-openshift.git",
                         "ref": "${SOURCE_BRANCH}"
                     },
-                    "contextDir": "${SOURCE_CONTEXT}"
+                    "contextDir": "db"
                 },
                 "strategy": {
                     "type": "Source",
                     "sourceStrategy": {
                         "from": {
                             "kind": "ImageStreamTag",
-                            "name": "startx-sv-mariadb:latest"
+                            "name": "startx-${BASE_IMAGE_TAG}:mariadb"
                         },
                         "env": [
                             {
@@ -190,7 +287,147 @@
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "${APP_NAME}:latest"
+                        "name": "mariadb:latest"
+                    }
+                },
+                "resources": {}
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api",
+                "labels": {
+                    "app": "api",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "triggers": [
+                    {
+                        "type": "GitHub",
+                        "github": {
+                            "secret": "${WEBHOOK_TOKEN}"
+                        }
+                    },
+                    {
+                        "type": "Generic",
+                        "generic": {
+                            "secret": "${WEBHOOK_TOKEN}"
+                        }
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "runPolicy": "SerialLatestOnly",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/startxfr/sxapi-demo-openshift.git",
+                        "ref": "${SOURCE_BRANCH}"
+                    },
+                    "contextDir": "api"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "startx-${BASE_IMAGE_TAG}:nodejs"
+                        },
+                        "env": [
+                            {
+                                "name": "SX_VERBOSE",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "api:latest"
+                    }
+                },
+                "resources": {}
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www",
+                "labels": {
+                    "app": "www",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "triggers": [
+                    {
+                        "type": "GitHub",
+                        "github": {
+                            "secret": "${WEBHOOK_TOKEN}"
+                        }
+                    },
+                    {
+                        "type": "Generic",
+                        "generic": {
+                            "secret": "${WEBHOOK_TOKEN}"
+                        }
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "runPolicy": "SerialLatestOnly",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/startxfr/sxapi-demo-openshift.git",
+                        "ref": "${SOURCE_BRANCH}"
+                    },
+                    "contextDir": "www"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "startx-${BASE_IMAGE_TAG}:nodejs"
+                        },
+                        "env": [
+                            {
+                                "name": "SX_VERBOSE",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "www:latest"
                     }
                 },
                 "resources": {}
@@ -200,11 +437,11 @@
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "mariadb",
                 "generation": 2,
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "mariadb",
+                    "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
                 },
@@ -230,11 +467,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "${APP_NAME}"
+                                "mariadb"
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "${APP_NAME}:latest"
+                                "name": "mariadb:latest"
                             }
                         }
                     },
@@ -245,17 +482,17 @@
                 "replicas": 1,
                 "test": false,
                 "selector": {
-                    "app": "${APP_NAME}",
-                    "deploymentconfig": "${APP_NAME}"
+                    "app": "mariadb",
+                    "deploymentconfig": "mariadb"
                 },
                 "template": {
                     "metadata": {
                         "labels": {
-                            "app": "${APP_NAME}",
-                            "type": "${APP_TYPE}",
+                            "app": "mariadb",
+                            "type": "backend",
                             "provider": "startx",
                             "template": "sxapi-demo-ephemeral-template",
-                            "deploymentconfig": "${APP_NAME}"
+                            "deploymentconfig": "mariadb"
                         },
                         "annotations": {
                             "openshift.io/generated-by": "STARTX"
@@ -264,7 +501,7 @@
                     "spec": {
                         "containers": [
                             {
-                                "name": "${APP_NAME}",
+                                "name": "mariadb",
                                 "image": " ",
                                 "env": [
                                     {
@@ -279,7 +516,7 @@
                                         "name": "MYSQL_ROOT_PASSWORD",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "${APP_NAME}",
+                                                "name": "mariadb",
                                                 "key": "MYSQL_ROOT_PASSWORD"
                                             }
                                         }
@@ -288,7 +525,7 @@
                                         "name": "MYSQL_USER",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "${APP_NAME}",
+                                                "name": "mariadb",
                                                 "key": "MYSQL_USER"
                                             }
                                         }
@@ -297,7 +534,7 @@
                                         "name": "MYSQL_PASSWORD",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "${APP_NAME}",
+                                                "name": "mariadb",
                                                 "key": "MYSQL_PASSWORD"
                                             }
                                         }
@@ -321,12 +558,12 @@
                                 ],
                                 "resources": {
                                     "limits": {
-                                        "memory": "${MEMORY_LIMIT}"
+                                        "memory": "512Mi"
                                     }
                                 },
                                 "volumeMounts": [
                                     {
-                                        "name": "${APP_NAME}-data",
+                                        "name": "mariadb-data",
                                         "mountPath": "/data"
                                     }
                                 ],
@@ -362,7 +599,7 @@
                         ],
                         "volumes": [
                             {
-                                "name": "${APP_NAME}-data",
+                                "name": "mariadb-data",
                                 "emptyDir": {
                                     "medium": ""
                                 }
@@ -383,192 +620,16 @@
             }
         },
         {
-            "kind": "Service",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-ephemeral-template"
-                },
-                "annotations": {
-                    "openshift.io/generated-by": "STARTX",
-                    "template.openshift.io/expose-uri": "mysql://{.spec.clusterIP}:{.spec.ports[?(.name==\"mysql\")].port}"
-                }
-            },
-            "spec": {
-                "ports": [
-                    {
-                        "name": "mysql",
-                        "protocol": "TCP",
-                        "port": 3306,
-                        "targetPort": 3306,
-                        "nodePort": 0
-                    }
-                ],
-                "selector": {
-                    "app": "${APP_NAME}",
-                    "deploymentconfig": "${APP_NAME}"
-                },
-                "type": "ClusterIP",
-                "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
-            }
-        },
-        {
-            "kind": "ImageStream",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "startx-sv-nodejs",
-                "annotations": {
-                    "openshift.io/display-name": "Base image ${BASE_IMAGE}",
-                    "openshift.io/generated-by": "STARTX"
-                },
-                "labels": {
-                    "base-image": "startx-sv-nodejs",
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-api-template"
-                }
-            },
-            "spec": {
-                "tags": [
-                    {
-                        "name": "latest",
-                        "annotations": {
-                            "openshift.io/display-name": "Base image for ${APP_NAME} (${BASE_IMAGE})",
-                            "description": "SXAPI base image for building ${APP_NAME} application. ",
-                            "iconClass": "icon-nodejs",
-                            "version": "${BASE_IMAGE_TAG}",
-                            "sampleRepo": "https://github.com/startxfr/docker-images-example-nodejs.git"
-                        },
-                        "from": {
-                            "kind": "DockerImage",
-                            "name": "${BASE_IMAGE_NS}/${BASE_IMAGE}:${BASE_IMAGE_TAG}"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "kind": "ImageStream",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "annotations": {
-                    "openshift.io/display-name": "SXAPI Demo ${APP_NAME}",
-                    "openshift.io/generated-by": "STARTX"
-                },
-                "labels": {
-                    "base-image": "startx-sv-nodejs",
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-api-template"
-                }
-            },
-            "spec": {
-                "tags": [
-                    {
-                        "name": "latest",
-                        "annotations": {
-                            "openshift.io/display-name": "${APP_NAME} (API)",
-                            "description": "SXAPI ${APP_NAME} (api)",
-                            "iconClass": "icon-nodejs",
-                            "tags": "startx,nodejs,frontend,${APP_NAME},api",
-                            "supports": "http,nodejs",
-                            "version": "latest"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "kind": "BuildConfig",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-api-template"
-                },
-                "annotations": {
-                    "openshift.io/generated-by": "STARTX"
-                }
-            },
-            "spec": {
-                "triggers": [
-                    {
-                        "type": "GitHub",
-                        "github": {
-                            "secret": "${WEBHOOK_TOKEN}"
-                        }
-                    },
-                    {
-                        "type": "Generic",
-                        "generic": {
-                            "secret": "${WEBHOOK_TOKEN}"
-                        }
-                    },
-                    {
-                        "type": "ImageChange",
-                        "imageChange": {}
-                    },
-                    {
-                        "type": "ConfigChange"
-                    }
-                ],
-                "runPolicy": "SerialLatestOnly",
-                "source": {
-                    "type": "Git",
-                    "git": {
-                        "uri": "${SOURCE_GIT}",
-                        "ref": "${SOURCE_BRANCH}"
-                    },
-                    "contextDir": "${SOURCE_CONTEXT}"
-                },
-                "strategy": {
-                    "type": "Source",
-                    "sourceStrategy": {
-                        "from": {
-                            "kind": "ImageStreamTag",
-                            "name": "startx-sv-nodejs:latest"
-                        },
-                        "env": [
-                            {
-                                "name": "SX_VERBOSE",
-                                "value": "true"
-                            }
-                        ]
-                    }
-                },
-                "output": {
-                    "to": {
-                        "kind": "ImageStreamTag",
-                        "name": "${APP_NAME}:latest"
-                    }
-                },
-                "resources": {}
-            }
-        },
-        {
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "api",
                 "generation": 2,
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "api",
+                    "type": "frontend",
                     "provider": "startx",
-                    "template": "sxapi-demo-openshift-api-template"
+                    "template": "sxapi-demo-ephemeral-template"
                 },
                 "annotations": {
                     "openshift.io/generated-by": "STARTX"
@@ -592,11 +653,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "${APP_NAME}"
+                                "api"
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "${APP_NAME}:latest"
+                                "name": "api:latest"
                             }
                         }
                     },
@@ -607,17 +668,17 @@
                 "replicas": 2,
                 "test": false,
                 "selector": {
-                    "app": "${APP_NAME}",
-                    "deploymentconfig": "${APP_NAME}"
+                    "app": "api",
+                    "deploymentconfig": "api"
                 },
                 "template": {
                     "metadata": {
                         "labels": {
-                            "app": "${APP_NAME}",
-                            "type": "${APP_TYPE}",
+                            "app": "api",
+                            "type": "frontend",
                             "provider": "startx",
-                            "template": "sxapi-demo-openshift-api-template",
-                            "deploymentconfig": "${APP_NAME}"
+                            "template": "sxapi-demo-ephemeral-template",
+                            "deploymentconfig": "api"
                         },
                         "annotations": {
                             "openshift.io/generated-by": "STARTX"
@@ -626,7 +687,7 @@
                     "spec": {
                         "containers": [
                             {
-                                "name": "${APP_NAME}",
+                                "name": "api",
                                 "image": " ",
                                 "env": [
                                     {
@@ -652,7 +713,7 @@
                                 ],
                                 "resources": {
                                     "limits": {
-                                        "memory": "${MEMORY_LIMIT}"
+                                        "memory": "128Mi"
                                     }
                                 },
                                 "livenessProbe": {
@@ -699,242 +760,16 @@
             }
         },
         {
-            "kind": "Service",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-api-template"
-                },
-                "annotations": {
-                    "openshift.io/generated-by": "STARTX"
-                }
-            },
-            "spec": {
-                "ports": [
-                    {
-                        "protocol": "TCP",
-                        "port": 8080,
-                        "targetPort": 8080
-                    }
-                ],
-                "selector": {
-                    "app": "${APP_NAME}",
-                    "deploymentconfig": "${APP_NAME}"
-                },
-                "type": "ClusterIP",
-                "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
-            }
-        },
-        {
-            "kind": "Route",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-api-template"
-                },
-                "annotations": {
-                    "openshift.io/generated-by": "STARTX"
-                }
-            },
-            "spec": {
-                "to": {
-                    "kind": "Service",
-                    "name": "${APP_NAME}",
-                    "weight": 100
-                }
-            },
-            "status": {
-                "ingress": [
-                    {
-                        "routerName": "router",
-                        "conditions": [
-                            {
-                                "type": "Admitted",
-                                "status": "True"
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "kind": "ImageStream",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "startx-sv-nodejs",
-                "annotations": {
-                    "openshift.io/display-name": "Base image ${BASE_IMAGE}",
-                    "openshift.io/generated-by": "STARTX"
-                },
-                "labels": {
-                    "base-image": "startx-sv-nodejs",
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
-                }
-            },
-            "spec": {
-                "tags": [
-                    {
-                        "name": "latest",
-                        "annotations": {
-                            "openshift.io/display-name": "Base image for ${APP_NAME} (${BASE_IMAGE})",
-                            "description": "SXAPI base image for building ${APP_NAME} application. ",
-                            "iconClass": "icon-nodejs",
-                            "version": "${BASE_IMAGE_TAG}",
-                            "sampleRepo": "https://github.com/startxfr/docker-images-example-nodejs.git"
-                        },
-                        "from": {
-                            "kind": "DockerImage",
-                            "name": "${BASE_IMAGE_NS}/${BASE_IMAGE}:${BASE_IMAGE_TAG}"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "kind": "ImageStream",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "annotations": {
-                    "openshift.io/display-name": "SXAPI Demo ${APP_NAME}",
-                    "openshift.io/generated-by": "STARTX"
-                },
-                "labels": {
-                    "base-image": "startx-sv-nodejs",
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
-                }
-            },
-            "spec": {
-                "tags": [
-                    {
-                        "name": "latest",
-                        "annotations": {
-                            "openshift.io/display-name": "${APP_NAME} (WWW)",
-                            "description": "SXAPI ${APP_NAME} (www)",
-                            "iconClass": "icon-nodejs",
-                            "tags": "startx,nodejs,frontend,${APP_NAME},www",
-                            "supports": "http,nodejs",
-                            "version": "latest"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "kind": "Secret",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "creationTimestamp": null,
-                "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
-                }
-            },
-            "stringData": {
-                "DEMO_API": "${DEMO_API}"
-            }
-        },
-        {
-            "kind": "BuildConfig",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APP_NAME}",
-                "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
-                    "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
-                },
-                "annotations": {
-                    "openshift.io/generated-by": "STARTX"
-                }
-            },
-            "spec": {
-                "triggers": [
-                    {
-                        "type": "GitHub",
-                        "github": {
-                            "secret": "${WEBHOOK_TOKEN}"
-                        }
-                    },
-                    {
-                        "type": "Generic",
-                        "generic": {
-                            "secret": "${WEBHOOK_TOKEN}"
-                        }
-                    },
-                    {
-                        "type": "ImageChange",
-                        "imageChange": {}
-                    },
-                    {
-                        "type": "ConfigChange"
-                    }
-                ],
-                "runPolicy": "SerialLatestOnly",
-                "source": {
-                    "type": "Git",
-                    "git": {
-                        "uri": "${SOURCE_GIT}",
-                        "ref": "${SOURCE_BRANCH}"
-                    },
-                    "contextDir": "${SOURCE_CONTEXT}"
-                },
-                "strategy": {
-                    "type": "Source",
-                    "sourceStrategy": {
-                        "from": {
-                            "kind": "ImageStreamTag",
-                            "name": "startx-sv-nodejs:latest"
-                        },
-                        "env": [
-                            {
-                                "name": "SX_VERBOSE",
-                                "value": "true"
-                            }
-                        ]
-                    }
-                },
-                "output": {
-                    "to": {
-                        "kind": "ImageStreamTag",
-                        "name": "${APP_NAME}:latest"
-                    }
-                },
-                "resources": {}
-            }
-        },
-        {
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "www",
                 "generation": 2,
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "www",
+                    "type": "frontend",
                     "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
+                    "template": "sxapi-demo-ephemeral-template"
                 },
                 "annotations": {
                     "openshift.io/generated-by": "STARTX"
@@ -958,11 +793,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "${APP_NAME}"
+                                "www"
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "${APP_NAME}:latest"
+                                "name": "www:latest"
                             }
                         }
                     },
@@ -973,17 +808,17 @@
                 "replicas": 2,
                 "test": false,
                 "selector": {
-                    "app": "${APP_NAME}",
-                    "deploymentconfig": "${APP_NAME}"
+                    "app": "www",
+                    "deploymentconfig": "www"
                 },
                 "template": {
                     "metadata": {
                         "labels": {
-                            "app": "${APP_NAME}",
-                            "type": "${APP_TYPE}",
+                            "app": "www",
+                            "type": "frontend",
                             "provider": "startx",
-                            "template": "sxapi-demo-openshift-www-template",
-                            "deploymentconfig": "${APP_NAME}"
+                            "template": "sxapi-demo-ephemeral-template",
+                            "deploymentconfig": "www"
                         },
                         "annotations": {
                             "openshift.io/generated-by": "STARTX"
@@ -992,7 +827,7 @@
                     "spec": {
                         "containers": [
                             {
-                                "name": "${APP_NAME}",
+                                "name": "www",
                                 "image": " ",
                                 "env": [
                                     {
@@ -1007,7 +842,7 @@
                                         "name": "DEMO_API",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "${APP_NAME}",
+                                                "name": "www",
                                                 "key": "DEMO_API"
                                             }
                                         }
@@ -1027,7 +862,7 @@
                                 ],
                                 "resources": {
                                     "limits": {
-                                        "memory": "${MEMORY_LIMIT}"
+                                        "memory": "128Mi"
                                     }
                                 },
                                 "livenessProbe": {
@@ -1077,12 +912,49 @@
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "mariadb",
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "mariadb",
+                    "type": "backend",
                     "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
+                    "template": "sxapi-demo-ephemeral-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX",
+                    "template.openshift.io/expose-uri": "mysql://{.spec.clusterIP}:{.spec.ports[?(.name==\"mysql\")].port}"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "mysql",
+                        "protocol": "TCP",
+                        "port": 3306,
+                        "targetPort": 3306,
+                        "nodePort": 0
+                    }
+                ],
+                "selector": {
+                    "app": "mariadb",
+                    "deploymentconfig": "mariadb"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api",
+                "labels": {
+                    "app": "api",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
                 },
                 "annotations": {
                     "openshift.io/generated-by": "STARTX"
@@ -1097,8 +969,42 @@
                     }
                 ],
                 "selector": {
-                    "app": "${APP_NAME}",
-                    "deploymentconfig": "${APP_NAME}"
+                    "app": "api",
+                    "deploymentconfig": "api"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www",
+                "labels": {
+                    "app": "www",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app": "www",
+                    "deploymentconfig": "www"
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
@@ -1111,12 +1017,12 @@
             "kind": "Route",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APP_NAME}",
+                "name": "api",
                 "labels": {
-                    "app": "${APP_NAME}",
-                    "type": "${APP_TYPE}",
+                    "app": "api",
+                    "type": "frontend",
                     "provider": "startx",
-                    "template": "sxapi-demo-openshift-www-template"
+                    "template": "sxapi-demo-ephemeral-template"
                 },
                 "annotations": {
                     "openshift.io/generated-by": "STARTX"
@@ -1125,7 +1031,43 @@
             "spec": {
                 "to": {
                     "kind": "Service",
-                    "name": "${APP_NAME}",
+                    "name": "api",
+                    "weight": 100
+                }
+            },
+            "status": {
+                "ingress": [
+                    {
+                        "routerName": "router",
+                        "conditions": [
+                            {
+                                "type": "Admitted",
+                                "status": "True"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www",
+                "labels": {
+                    "app": "www",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "to": {
+                    "kind": "Service",
+                    "name": "www",
                     "weight": 100
                 }
             },
@@ -1146,58 +1088,24 @@
     ],
     "parameters": [
         {
-            "name": "APP_NAME",
-            "displayName": "Application name",
-            "description": "The name of the created application",
-            "value": "mariadb",
-            "required": true
-        },
-        {
-            "name": "APP_TYPE",
-            "displayName": "Application type",
-            "description": "The type of the created application (used for grouping)",
-            "value": "backend"
-        },
-        {
-            "name": "SOURCE_GIT",
-            "displayName": "Application source-code repository",
-            "description": "URL to the source code to use during build process",
-            "value": "https://github.com/startxfr/sxapi-demo-openshift.git",
-            "required": true
-        },
-        {
             "name": "SOURCE_BRANCH",
             "displayName": "Application source-code branch",
-            "description": "Name of the branch to use for building this application",
+            "description": "Name of the branch to use for building this application (dev, test, prod)",
             "value": "dev",
-            "required": true
-        },
-        {
-            "name": "SOURCE_CONTEXT",
-            "displayName": "Application source-code directory context",
-            "description": "Name of the source directory where application code reside",
-            "value": "db",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE_NS",
-            "displayName": "Base image namespace",
-            "description": "Image namespace in docker repository where the build image reside. (if not in local repository, should look for dockerhub namespace)",
-            "value": "startx",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE",
-            "displayName": "Base image name",
-            "description": "Base image to use for buidling this application",
-            "value": "sv-mariadb",
             "required": true
         },
         {
             "name": "BASE_IMAGE_TAG",
             "displayName": "Base image tag",
-            "description": "Base image tag (release, flavour) to use for buidling this application",
+            "description": "Base image flavour to use for buidling this application (latest, fc27, fc28, centos6, centos7)",
             "value": "latest",
+            "required": true
+        },
+        {
+            "name": "DEMO_API",
+            "displayName": "API fqdn",
+            "description": "Domain name of the API endpoint to use in this frontend (api-xxxxx.apps.startx.fr were xxxxx is your project namespace)",
+            "value": "api-demo-dev.apps.startx.fr",
             "required": true
         },
         {
@@ -1218,8 +1126,8 @@
         },
         {
             "name": "MYSQL_USER",
-            "displayName": "Mysql user",
-            "description": "Default user to create",
+            "displayName": "Mysql application user",
+            "description": "Database user to create",
             "value": "demouser",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
@@ -1228,7 +1136,7 @@
         {
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
-            "description": "Password of the default user",
+            "description": "Database password of the application user",
             "value": "demopwd",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
@@ -1239,160 +1147,6 @@
             "displayName": "Mysql database",
             "description": "name of the default database to create",
             "value": "demodb",
-            "required": true
-        },
-        {
-            "name": "MEMORY_LIMIT",
-            "displayName": "Memory Limit",
-            "description": "Maximum amount of memory the application can use.",
-            "value": "512Mi",
-            "required": true
-        },
-        {
-            "name": "APP_NAME",
-            "displayName": "Application name",
-            "description": "The name of the created application",
-            "value": "api",
-            "required": true
-        },
-        {
-            "name": "APP_TYPE",
-            "displayName": "Application type",
-            "description": "The type of the created application (used for grouping)",
-            "value": "frontend"
-        },
-        {
-            "name": "SOURCE_GIT",
-            "displayName": "Application source-code repository",
-            "description": "URL to the source code to use during build process",
-            "value": "https://github.com/startxfr/sxapi-demo-openshift.git",
-            "required": true
-        },
-        {
-            "name": "SOURCE_BRANCH",
-            "displayName": "Application source-code branch",
-            "description": "Name of the branch to use for building this application",
-            "value": "dev",
-            "required": true
-        },
-        {
-            "name": "SOURCE_CONTEXT",
-            "displayName": "Application source-code directory context",
-            "description": "Name of the source directory where application code reside",
-            "value": "api",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE_NS",
-            "displayName": "Base image namespace",
-            "description": "Image namespace in docker repository where the build image reside. (if not in local repository, should look for dockerhub namespace)",
-            "value": "startx",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE",
-            "displayName": "Base image name",
-            "description": "Base image to use for buidling this application",
-            "value": "sv-nodejs",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE_TAG",
-            "displayName": "Base image tag",
-            "description": "Base image tag (release, flavour) to use for buidling this application",
-            "value": "latest",
-            "required": true
-        },
-        {
-            "name": "WEBHOOK_TOKEN",
-            "displayName": "Webhook token",
-            "description": "Secret token to use in github, gitlab or other to hook build action when code change",
-            "generate": "expression",
-            "from": "[a-zA-Z0-9]{24}",
-            "required": true
-        },
-        {
-            "name": "MEMORY_LIMIT",
-            "displayName": "Memory Limit",
-            "description": "Maximum amount of memory the application can use.",
-            "value": "128Mi",
-            "required": true
-        },
-        {
-            "name": "APP_NAME",
-            "displayName": "Application name",
-            "description": "The name of the created application",
-            "value": "www",
-            "required": true
-        },
-        {
-            "name": "APP_TYPE",
-            "displayName": "Application type",
-            "description": "The type of the created application (used for grouping)",
-            "value": "frontend"
-        },
-        {
-            "name": "SOURCE_GIT",
-            "displayName": "Application source-code repository",
-            "description": "URL to the source code to use during build process",
-            "value": "https://github.com/startxfr/sxapi-demo-openshift.git",
-            "required": true
-        },
-        {
-            "name": "SOURCE_BRANCH",
-            "displayName": "Application source-code branch",
-            "description": "Name of the branch to use for building this application",
-            "value": "dev",
-            "required": true
-        },
-        {
-            "name": "SOURCE_CONTEXT",
-            "displayName": "Application source-code directory context",
-            "description": "Name of the source directory where application code reside",
-            "value": "www",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE_NS",
-            "displayName": "Base image namespace",
-            "description": "Image namespace in docker repository where the build image reside. (if not in local repository, should look for dockerhub namespace)",
-            "value": "startx",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE",
-            "displayName": "Base image name",
-            "description": "Base image to use for buidling this application",
-            "value": "sv-nodejs",
-            "required": true
-        },
-        {
-            "name": "BASE_IMAGE_TAG",
-            "displayName": "Base image tag",
-            "description": "Base image tag (release, flavour) to use for buidling this application",
-            "value": "latest",
-            "required": true
-        },
-        {
-            "name": "DEMO_API",
-            "displayName": "API base URL",
-            "description": "Domain name of the API endpoint to use in this frontend",
-            "value": "api-test.apps.startx.fr",
-            "required": true
-        },
-        {
-            "name": "WEBHOOK_TOKEN",
-            "displayName": "Webhook token",
-            "description": "Secret token to use in github, gitlab or other to hook build action when code change",
-            "generate": "expression",
-            "from": "[a-zA-Z0-9]{24}",
-            "required": true
-        },
-        {
-            "name": "MEMORY_LIMIT",
-            "displayName": "Memory Limit",
-            "description": "Maximum amount of memory the application can use.",
-            "value": "128Mi",
             "required": true
         }
     ]
