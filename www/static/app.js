@@ -11,7 +11,7 @@ app = {
         console.log(response);
         appContainer
         $("#appContainer").text(response.data.server.hostname);
-        $("#appRelease").html(response.data.service.version + " <span style='color:grey'>via " + response.data.server.hostname+"</span>");
+        $("#appRelease").html(response.data.service.version + " <span style='color:grey'>via " + response.data.server.hostname + "</span>");
       }
       else {
         console.error(response.data || response);
@@ -21,6 +21,7 @@ app = {
     app.sirenConvert.init();
     app.tvaConvert.init();
     app.greffeSearch.init();
+    app.listeDepartement.init();
   },
   api: {
     info: null,
@@ -33,8 +34,8 @@ app = {
         }
         else {
           app.api.info = response;
-        $("#appSvContainer").text(app.api.info.server.hostname);
-          $("#appSvRelease").html(app.api.info.service.version + " <span style='color:grey'>via " + app.api.info.server.hostname+"</span>");
+          $("#appSvContainer").text(app.api.info.server.hostname);
+          $("#appSvRelease").html(app.api.info.service.version + " <span style='color:grey'>via " + app.api.info.server.hostname + "</span>");
           var message = "vous êtes connecté à l'API <b>" +
           app.api.info.service.name +
           "</b> servi depuis le container <b>" +
@@ -102,7 +103,6 @@ app = {
       }
       else {
         app.api.get("insee/" + $this.inputEl.val() + "/tva", null, function (error, response) {
-          console.error(error, response);
           if (error) {
             $this.msgNokEl.show();
             console.error(error);
@@ -139,7 +139,6 @@ app = {
       }
       else {
         app.api.get("insee/" + $this.inputEl.val() + "/siren", null, function (error, response) {
-          console.error(error, response);
           if (error) {
             $this.msgNokEl.show();
             console.error(error);
@@ -176,7 +175,6 @@ app = {
       }
       else {
         app.api.get("insee/" + $this.inputEl.val(), null, function (error, response) {
-          console.error(error, response);
           if (error) {
             $this.msgNokEl.show();
             console.error(error);
@@ -188,6 +186,36 @@ app = {
           }
         });
       }
+    }
+  },
+  listeDepartement: {
+    tableDivEl: null,
+    msgNokEl: null,
+    init: function () {
+      this.tableDivEl = $("#listeDepartementTable");
+      this.msgNokEl = $("#listeDepartementErrorMessage");
+      $("#listeDepartementTable").removeClass("hidden").hide();
+      app.api.get("ref/departement", null, function (error, response) {
+        if (error) {
+          app.listeDepartement.tableDivEl.hide();
+          app.listeDepartement.msgNokEl.show();
+          console.error(error);
+        }
+        else {
+          console.log(response);
+          var table = $("table", app.listeDepartement.tableDivEl);
+          $(response).each(function (index, item) {
+            var row = "<tr>";
+            row += "<td>" + item.id + "</td>";
+            row += "<td>" + item.name + "</td>";
+            row += "<td>" + item.prefecture_dep + "</td>";
+            row += "<td>" + item.region_dep + "</td>";
+            table.append(row);
+          });
+          app.listeDepartement.tableDivEl.show();
+          app.listeDepartement.msgNokEl.hide();
+        }
+      });
     }
   },
   tools: {

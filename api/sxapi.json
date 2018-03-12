@@ -1,7 +1,7 @@
 {
     "name": "sxapi-demo-openshift-api",
     "description": "API application for the sxapi openshift demo",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "debug": true,
     "log": {
         "filters": {
@@ -107,7 +107,7 @@
                         "path": "/ref/departement",
                         "method": "GET",
                         "endpoint": "list",
-                        "sql": "SELECT id_dep AS id, nom_dep AS name FROM ref_departement ORDER BY id ASC LIMIT 200"
+                        "sql": "SELECT id_dep AS id, nom_dep AS name, prefecture_dep, region_dep FROM ref_departement ORDER BY id ASC LIMIT 200"
                     },
                     {
                         "path": "/ref/pays",

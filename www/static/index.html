@@ -114,17 +114,39 @@
                     </p>
                 </div>
             </form>
-            
-        <br>
-        <br>
-        <br>
-        <nav class="navbar navbar-default navbar-fixed-bottom">
-            <div class="container">
-                &copy; STARTX - frontend : v<span id="appRelease">0.0.0</span> - api : v<span id="appSvRelease">0.0.0</span>
+
+            <!-- listeDepartement -->
+            <br class="clear">
+            <br>
+            <h2>
+                <span class="glyphicon glyphicon-random" aria-hidden="true"></span> &nbsp;
+                Liste des départements
+            </h2>
+            <p class="alert alert-danger" id="listeDepartementErrorMessage">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                La liste des départements n'est pas chargée
+            </p>
+            <div class="table-responsive hidden" id="listeDepartementTable">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Préfecture</th>
+                        <th>Région</th>
+                    </tr>
+                </table>
             </div>
-        </nav>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script src="app.js"></script>
+
+            <br>
+            <br>
+            <br>
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container">
+                    &copy; STARTX - frontend : v<span id="appRelease">0.0.0</span> - api : v<span id="appSvRelease">0.0.0</span>
+                </div>
+            </nav>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+            <script src="app.js"></script>
     </body>
 </html>
