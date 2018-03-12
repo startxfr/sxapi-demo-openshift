@@ -20,6 +20,7 @@ app = {
     app.api.init();
     app.sirenConvert.init();
     app.tvaConvert.init();
+    app.greffeSearch.init();
   },
   api: {
     info: null,
@@ -138,6 +139,43 @@ app = {
       }
       else {
         app.api.get("insee/" + $this.inputEl.val() + "/siren", null, function (error, response) {
+          console.error(error, response);
+          if (error) {
+            $this.msgNokEl.show();
+            console.error(error);
+          }
+          else {
+            console.log(response);
+            $("b", $this.msgOkEl).text(response);
+            $this.msgOkEl.show();
+          }
+        });
+      }
+    }
+  },
+  greffeSearch: {
+    inputEl: null,
+    btnEl: null,
+    msgOkEl: null,
+    msgNokEl: null,
+    init: function () {
+      this.inputEl = $("#greffeSearchInputSiren");
+      this.btnEl = $("#greffeSearchBtn");
+      this.msgOkEl = $("#greffeSearchSucessMessage");
+      this.msgNokEl = $("#greffeSearchErrorMessage");
+      this.msgOkEl.removeClass("hidden").hide();
+      this.msgNokEl.removeClass("hidden").hide();
+      this.btnEl.click(this.onClickConvert);
+    },
+    onClickConvert: function () {
+      var $this = app.greffeSearch;
+      $this.msgOkEl.hide();
+      $this.msgNokEl.hide();
+      if ($this.inputEl.val().length === 0) {
+        $this.msgNokEl.show();
+      }
+      else {
+        app.api.get("insee/" + $this.inputEl.val(), null, function (error, response) {
           console.error(error, response);
           if (error) {
             $this.msgNokEl.show();

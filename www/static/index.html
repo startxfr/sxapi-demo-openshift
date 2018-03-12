@@ -32,9 +32,8 @@
                     tandis que le contenu dynamique provient du container <b id="appSvContainer"></b>
                 </p>
             </div>
-            
+
             <!-- sirenConvert -->
-            <br class="clear">
             <h2>
                 <span class="glyphicon glyphicon-random" aria-hidden="true"></span> &nbsp;
                 Convertiseur Siren vers n&deg; TVA intra
@@ -59,7 +58,7 @@
                     </p>
                 </div>
             </form>
-            
+
             <!-- tvaConvert -->
             <br class="clear">
             <br>
@@ -87,11 +86,38 @@
                     </p>
                 </div>
             </form>
-        </div>
-        
+
+            <!-- greffeSearch -->
+            <br class="clear">
             <br>
-            <br>
-            <br>
+            <h2>
+                <span class="glyphicon glyphicon-random" aria-hidden="true"></span> &nbsp;
+                Recherche greffe du commerce
+            </h2>
+            <form class="form-inline">
+                <div class="form-group col-sm-4">
+                    <label for="greffeSearchInputSiren" class="sr-only">SIREN</label>
+                    <input type="text" class="form-control" id="greffeSearchInputSiren" placeholder="n° Siren">
+                    <button type="button" class="btn btn-primary" id="greffeSearchBtn">Convertir</button>
+                </div>
+                <div class="col-sm-8">
+                    <p class="form-control-static hidden" id="greffeSearchSucessMessage">
+                        <span class=" text-success">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            Informations sur le numero de SIREN : 
+                        </span>
+                        <b>XXX XXX XXX</b>
+                    </p>
+                    <p class="form-control-static text-danger hidden" id="greffeSearchErrorMessage">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        Impossible de convertir ce numéro de SIREN (veuillez vérifier votre saisie)
+                    </p>
+                </div>
+            </form>
+            
+        <br>
+        <br>
+        <br>
         <nav class="navbar navbar-default navbar-fixed-bottom">
             <div class="container">
                 &copy; STARTX - frontend : v<span id="appRelease">0.0.0</span> - api : v<span id="appSvRelease">0.0.0</span>
