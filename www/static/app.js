@@ -5,31 +5,46 @@ app = {
     apiUrl: "http://api-test.apps.startx.fr/"
   },
   init: function () {
-    $.ajax({method: "GET", url: "/info"})
+    $.ajax({method: "GET", url: "/env"})
     .always(function (response, status) {
       if (status === "success" && response.code === "ok") {
-        console.log(response);
-        appContainer
-        $("#appContainer").text(response.data.server.hostname);
-        $("#appRelease").html(response.data.service.version + " <span style='color:grey'>via " + response.data.server.hostname + "</span>");
+        if(response.data && response.data.DEMO_API) {
+          app.config.apiUrl = "http://"+response.data.DEMO_API+"/";
+        }
+        $.ajax({method: "GET", url: "/info"})
+        .always(function (response, status) {
+          if (status === "success" && response.code === "ok") {
+            console.log(response);
+            $("#appContainer").text(response.data.server.hostname);
+            $("#appRelease").html(response.data.service.version + " <span style='color:grey'>via " + response.data.server.hostname + "</span>");
+          }
+          else {
+            console.error(response.data || response);
+          }
+        });
+        app.api.init();
+        app.sirenConvert.init();
+        app.tvaConvert.init();
+        app.greffeSearch.init();
+        app.listeDepartement.init();
+        app.listePays.init();
       }
       else {
-        console.error(response.data || response);
+        console.error(response);
+        var message = "impossible de contacter le backend www car " + (response.message || response);
+        $(app.tools.alertBox("danger", message)).insertAfter("div.jumbotron");
+        console.error(message);
       }
     });
-    app.api.init();
-    app.sirenConvert.init();
-    app.tvaConvert.init();
-    app.greffeSearch.init();
-    app.listeDepartement.init();
-    app.listePays.init();
+
   },
   api: {
     info: null,
     init: function () {
       this.get("info", null, function (error, response) {
         if (error) {
-          var message = "impossible de contacter l'API car " + (error.message || error);
+          console.error(error, response);
+          var message = "impossible de contacter l'API car " + (error.message || error.statusText || error);
           $(app.tools.alertBox("danger", message)).insertAfter("div.jumbotron");
           console.error(message);
         }

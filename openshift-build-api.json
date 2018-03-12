@@ -32,7 +32,8 @@
                     "base-image": "startx-sv-nodejs",
                     "app": "${APP_NAME}",
                     "type": "${APP_TYPE}",
-                    "provider": "startx"
+                    "provider": "startx",
+                    "template": "sxapi-demo-openshift-api-template"
                 }
             },
             "spec": {
@@ -67,7 +68,8 @@
                     "base-image": "startx-sv-nodejs",
                     "app": "${APP_NAME}",
                     "type": "${APP_TYPE}",
-                    "provider": "startx"
+                    "provider": "startx",
+                    "template": "sxapi-demo-openshift-api-template"
                 }
             },
             "spec": {
