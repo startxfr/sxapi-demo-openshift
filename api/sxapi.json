@@ -1,7 +1,7 @@
 {
     "name": "sxapi-demo-openshift-api",
     "description": "API application for the sxapi openshift demo",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "debug": true,
     "log": {
         "filters": {
@@ -73,6 +73,12 @@
                 "desc": "Display technical informations about this API",
                 "resource": "serviceinfo-api",
                 "endpoint": "info"
+            },
+            {
+                "path": "/env",
+                "desc": "Display environements variable for this API",
+                "resource": "serviceinfo-api",
+                "endpoint": "getEnv"
             },
             {
                 "path": "/ping",
