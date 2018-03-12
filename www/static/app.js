@@ -22,6 +22,7 @@ app = {
     app.tvaConvert.init();
     app.greffeSearch.init();
     app.listeDepartement.init();
+    app.listePays.init();
   },
   api: {
     info: null,
@@ -194,7 +195,7 @@ app = {
     init: function () {
       this.tableDivEl = $("#listeDepartementTable");
       this.msgNokEl = $("#listeDepartementErrorMessage");
-      $("#listeDepartementTable").removeClass("hidden").hide();
+      this.tableDivEl.removeClass("hidden").hide();
       app.api.get("ref/departement", null, function (error, response) {
         if (error) {
           app.listeDepartement.tableDivEl.hide();
@@ -205,15 +206,50 @@ app = {
           console.log(response);
           var table = $("table", app.listeDepartement.tableDivEl);
           $(response).each(function (index, item) {
-            var row = "<tr>";
-            row += "<td>" + item.id + "</td>";
+            var row = "<tr><td>" + item.id + "</td>";
             row += "<td>" + item.name + "</td>";
             row += "<td>" + item.prefecture_dep + "</td>";
-            row += "<td>" + item.region_dep + "</td>";
+            row += "<td>" + item.region_dep + "</td></tr>";
             table.append(row);
           });
           app.listeDepartement.tableDivEl.show();
           app.listeDepartement.msgNokEl.hide();
+        }
+      });
+    }
+  },
+  listePays: {
+    tableDivEl: null,
+    btnEl: null,
+    msgNokEl: null,
+    init: function () {
+      this.tableDivEl = $("#listePaysTable");
+      this.btnEl = $("#listePaysBtn");
+      this.msgNokEl = $("#listePaysErrorMessage");
+      this.tableDivEl.removeClass("hidden").hide();
+      this.msgNokEl.removeClass("hidden").hide();
+      this.btnEl.click(this.onClickLoad);
+    },
+    onClickLoad: function () {
+      var $this = app.listePays;
+      $this.msgNokEl.hide();
+      app.api.get("ref/pays", null, function (error, response) {
+        if (error) {
+          $this.msgNokEl.show();
+          console.error(error);
+        }
+        else {
+          console.log(response);
+          var table = $("table", app.listePays.tableDivEl);
+          $(response).each(function (index, item) {
+            var row = "<tr><td>" + item.id + "</td>";
+            row += "<td>" + item.name + "</td>";
+            row += "<td>" + item.code + "</td></tr>";
+            console.log(table);
+            table.append(row);
+          });
+          app.listePays.tableDivEl.show();
+          app.listePays.msgNokEl.hide();
         }
       });
     }
