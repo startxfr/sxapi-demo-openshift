@@ -448,7 +448,7 @@
             "name": "BASE_IMAGE_TAG",
             "displayName": "Base image tag",
             "description": "Base image tag (release, flavour) to use for buidling this application",
-            "value": "centos7",
+            "value": "fc27",
             "required": true
         },
         {
