@@ -15,17 +15,15 @@ is based on [nodejs](https://nodejs.org) technologie and is
 available as a docker image on dockerhub ([sxapi image](https://hub.docker.com/r/startx/sxapi)) or as an
 npm module ([sxapi npm module](https://www.npmjs.com/package/sxapi-core))
 
-= Setup demo environement in AWS
+## Setup demo environement in AWS
 
 Require knowledge of [AWS services](https://aws.amazon.com) (especialy EC2, VPC, Route53) and full access to 
 EC2, VPC and Route53 services. Your AWS account must be billable and you must have access to a domain hostZone.
 
-== Installing Openshift
-
 These instruction will help you setup an openshift single instance on an AWS EC2 instance responding to a public sub-domain
 of your corporation or entity.
 
-=== VPC network configuration
+### VPC network configuration
 
 You must setup the following resources under you AWS VPC cnfiguration. With your kwoledge of AWS VPC services
 you must configure :
@@ -36,7 +34,7 @@ you must configure :
 - 1 ***DHCP configuration*** with default configuration
 - 1 ***Security group*** with in and out traffic authorized for All traffic, TCP, ICMP and UDP inbound and outbound to/from anywhere
 
-=== EC2 instance configuration
+### EC2 instance configuration
 
 Start your single node server in order to install and configure your Openshift plateform.
 
@@ -49,7 +47,7 @@ Start your single node server in order to install and configure your Openshift p
 - Associate the "openAll" security group created in the previous section
 - Review and launch
 
-=== Route53 DNS configuration
+### Route53 DNS configuration
 
 Enable you application to use your own domain zone and make application accessible to your domain.
 In the next sections, we will assume you are responding to the DNS record `openshift.demo.startx.fr` for 
@@ -62,7 +60,7 @@ master node, and `*.openshift.demo.startx.fr` for applications.
 - Create a new DNS entry of type CNAME, with your selected applications domain name (ex: `*.openshift.demo.startx.fr`) and the master domain name (ex: `openshift.demo.startx.fr`) as value
 - Hit "create" and wait for propagation
 
-=== Server installation
+## Server installation
 
 This section will help you install and run your openshift demo node on your EC2 instance previously launched.
 
@@ -99,11 +97,11 @@ cd ~/sxapi-demo-openshift
 oc login -u system:admin
 ```
 
-== Deploy your application
+## Deploy your application
 
 This section will help you start a build and deploy of your application stack.
 
-=== Create project in openshift
+### Create project in openshift
 
 In order to visualize your objects in the webconsole, you should create the project 
 using the Web console. 
@@ -112,7 +110,7 @@ using the Web console.
 - Authenticate using the system admin user `system` with passsword `admin`
 - Create a new project (right panel) and name it. We will assume your project name for this demo will be `demo`
 
-=== Create project in openshift
+### Create project in openshift
 
 ```
 oc login -u system:admin
@@ -124,7 +122,7 @@ sleep 60
 oc get all
 ```
 
-=== Access your application in your browser
+### Access your application in your browser
 
 Access your application using your browser on `https://api.openshift.demo.startx.fr`
 
