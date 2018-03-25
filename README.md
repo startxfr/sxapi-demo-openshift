@@ -29,8 +29,8 @@ You must setup the following resources under you AWS VPC cnfiguration. With your
 you must configure :
 
 - 1 ***VPC*** with DHCP, DNS and Hostname resolution activated. Whatever CIDR is OK (example `192.168.0.0/24`)
+- 1 ***internet gateway*** with default configuration. Associated to the previously created VPC 
 - 1 ***Subnet*** routing all trafic from and to the internet gateway. All port opened and public IP activated.
-- 1 ***internet gateway*** with default configuration
 - 1 ***DHCP configuration*** with default configuration
 - 1 ***Security group*** with in and out traffic authorized for All traffic, TCP, ICMP and UDP inbound and outbound to/from anywhere
 
@@ -42,7 +42,7 @@ Start your single node server in order to install and configure your Openshift p
 - Choose Marketplace then type centos (hit enter) and choose "CentOS 7 (x86_64) - with Updates HVM"
 - Select a "t2.xlarge" instance (t2.medium is minimum to run this application)
 - On next screen, choose VPC and subnet previously created. Check "automated IP" is activated. and hit "next"
-- Select a 50Go SSD for storage, then next
+- Select a 50Go SSD for storage, with 2500/IOP on rovisionned SSD, then next
 - Create labels according to your labelling strategy
 - Associate the "openAll" security group created in the previous section
 - Review and launch
@@ -116,7 +116,7 @@ using the Web console.
 oc login -u system:admin
 oc new-project demo
 oc project demo
-oc process -f openshift-build-all-ephemeral.yml -p DEMO_API=openshift.demo.startx.fr | oc create -f -
+oc process -f openshift-build-all-ephemeral.json -p DEMO_API=openshift.demo.startx.fr | oc create -f -
 echo "wait 60sec"
 sleep 60
 oc get all
