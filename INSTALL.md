@@ -1,9 +1,8 @@
 # Openshift installation
 
 To run this demo you need to have a 
-[Red Hat Openshift Container Plateform](https://www.redhat.com/fr/technologies/cloud-computing/openshift) cluster,  
-an [Openshift Origin](https://www.openshift.org) cluster,
-or an [Openshift Online](https://manage.openshift.com) account.
+[Red Hat Openshift Container Plateform](https://www.redhat.com/fr/technologies/cloud-computing/openshift) cluster, an [Openshift Origin](https://www.openshift.org) cluster,
+or an [Openshift Online](https://manage.openshift.com) account.<br>
 This section will help you for Online and Origin setup. Red Hat Container Plateform require an
 active subscription. You can contact our [Consulting team](https://www.startx.fr/contact) to obtain a free subscription for
 testing this product.
@@ -52,8 +51,8 @@ Start your single node server in order to install and configure your Openshift p
 - On EC2, click on **start a new instance**
 - Choose Marketplace then type centos (hit enter) and choose **CentOS 7 (x86_64) - with Updates HVM**
 - Select a **t2.xlarge** instance (t2.medium is minimum to run this application)
-- On next screen, choose VPC and subnet previously created. Check `automated IP` is activated. and hit **next**
-- Select a 50Go SSD for storage, with 2500/IOP on rovisionned SSD, then next
+- On next screen, choose VPC and subnet previously created. Check `automated IP` is activated. and hit next
+- Select a **50Go SSD** for storage, with **2500/IOP** on provisionned SSD, then next
 - Create labels according to your labelling strategy
 - Associate the **openAll security group** created in the previous section
 - Choose your **ssh key** in your wallet or create a dedicated one
@@ -116,9 +115,22 @@ oc login -u system:admin https://$DNSNAME:8443
 ## Setup Minishift environement
 
 [Minishift](https://docs.openshift.org/latest/minishift/index.html) deliver simple and configured Openshift environement into various VM images.
-You can then run a simple Openshift environement for developpement purpose.
+You can then run a simple Openshift environement for developpement purpose.<br>
 Read and follow the [minishift installation guide](https://docs.openshift.org/latest/minishift/getting-started/installing.html) if you want to run this demo into a minishift environement.
 
+## After installation
+
+Whatever your installation method and your Openshift environement, you must have access to it using oc-cli tools. 
+If you don't have a local openshift client, you can follow [openshift CLI installation guide](https://docs.openshift.com/container-platform/3.9/cli_reference/get_started_cli.html#installing-the-cli).
+
+You must login to your openshift cluser to start running this demo. After being successfully logged, you can [follow next steps of this demo](README.md)
+```bash
+# <user> your openshift username
+# <pwd> your openshift password
+# <master_domain> your master domain name
+# ex: oc login -u system:admin https://openshift.demo.startx.fr:8443
+oc login -u <user>:<pwd> https://<master_domain>
+```
 
 ## Troubleshooting
 
