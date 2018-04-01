@@ -7,8 +7,7 @@ on top of an [openshift platform](https://www.openshift.org).
 
 This demo intend to show how you can run an full application using [Openshift PAAS](https://www.openshift.org)
 or [Red Hat Openshift](https://www.redhat.com/fr/technologies/cloud-computing/openshift) as
-building and running plateform.<br>
-By using [docker](https://hub.docker.com/r/startx), managed by 
+building and running plateform. By using [docker](https://hub.docker.com/r/startx), managed by 
 [Kubernetes](https://kubernetes.io) and superset with CI/CD + security and management feature bringed by
 [Openshift](https://www.openshift.org) layer, you will see how to use the latest technologies 
 to run scalable, resilient and secured application on top of a smart and distributed architecture.<br>
@@ -18,10 +17,19 @@ is based on [nodejs](https://nodejs.org) technologie and is
 available as a docker image on dockerhub ([sxapi image](https://hub.docker.com/r/startx/sxapi)) or as an
 npm module ([sxapi npm module](https://www.npmjs.com/package/sxapi-core))
 
+```
+ .---------------.          .---------------.   .---------------.                 .-,(  ),-.    
+ |      db       |          |      API      |   |   frontend    |              .-(          )-. 
+ |---------------|<---------|---------------|   |---------------|------------>(    internet    )
+ | mariadb       |          | nodejs / json |   | nodejs / html |              '-(          ).-'
+ '---------------'          '---------------'   '---------------'                  '-.( ).-'    
+                                    ^                                                  |
+                                    '--------------------------------------------------'
+```
+
 ## Setup workstation environement
 
-After having a running Openshift environement using one of the previous method, you should check that your
-local or demo workstation meet the following requirements :
+Running the complete agenda of this demo require your local or demo workstation to meet the following requirements :
 - `git` command must be installed
 - internet access must be configured
 - `docker` command must be installed and running (for docker and s2i deployement strategy)
@@ -29,7 +37,7 @@ local or demo workstation meet the following requirements :
 - `oc` command must be installed (for openshift deployement strategies)
 
 All openshift template is self sufficient and we can use all of them without having a local copy of the source code.
-For all docker build and s2i build strategy, whe need to have a local copy of source code. In order to run the 
+However, for all docker build and s2i build strategy, whe need to have a local copy of source code. In order to run the 
 complete demo agenda, you need to install a local copy of the source code.
 
 ```bash
@@ -44,15 +52,15 @@ cd sxapi-demo-openshift
 
 You will find in our [Openshift installation guide](INSTALL.md) instructions for creating an Openshift cluster
 using [Openshift Online](INSTALL.md#setup-openshift-online-environement), 
-[Openshift Origin on AWS](INSTALL.md#setup-openshift-online-environement-AWS--environement-) or using
-[Minishift](INSTALL.md#setup-minishift-environement)
+[Openshift Origin on AWS](INSTALL.md#setup-openshift-online-environement-AWS--environement-) as well as 
+[Minishift](INSTALL.md#setup-minishift-environement) configurations.
 
 ### Create Openshift project
 
 #### Create Openshift project using web-console
 
 In openshift Origin, if you want to visualize your objects in the web-console, you should create the project 
-using the Web console. 
+from the Web console. 
 
 - Connect to the web console using `https://openshift.demo.startx.fr:8443`
 - Authenticate using the system admin user `system` with passsword `admin`
@@ -76,6 +84,15 @@ oc project <project>
 
 This section will help you start a build and deploy of your application stack using various build and
 deployement strategies.
+
+
+
+
+
+
+
+
+
 
 ### Create application in openshift
 
