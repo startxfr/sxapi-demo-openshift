@@ -2132,7 +2132,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql application user",
             "description": "Database user to create",
-            "value": "master-user",
+            "value": "test-user",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -2141,7 +2141,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Database password of the application user",
-            "value": "master-pwd123",
+            "value": "test-pwd123",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true

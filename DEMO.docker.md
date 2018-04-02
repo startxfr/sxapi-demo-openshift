@@ -25,8 +25,8 @@ docker run -d \
        --name sxapi-demo-openshift-db \
        -e SX_VERBOSE=true \
        -e SX_DEBUG=true \
-       -e MYSQL_USER="dev-user" \
-       -e MYSQL_PASSWORD="dev-pwd123" \
+       -e MYSQL_USER="test-user" \
+       -e MYSQL_PASSWORD="test-pwd123" \
        -e MYSQL_DATABASE="demo" \
        -v ./db:/tmp/sql:z \
        -p 3306:3306 \
@@ -45,8 +45,8 @@ docker run -d \
        -e SX_VERBOSE=true \
        -e SX_DEBUG=true \
        -e MARIADB_SERVICE_HOST="sxapi-demo-openshift-db" \
-       -e MYSQL_USER="dev-user" \
-       -e MYSQL_PASSWORD="dev-pwd123" \
+       -e MYSQL_USER="test-user" \
+       -e MYSQL_PASSWORD="test-pwd123" \
        -e MYSQL_DATABASE="demo" \
        --link sxapi-demo-openshift-db:db \
        -p 8080:8080 \
