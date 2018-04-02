@@ -34,8 +34,8 @@ oc new-project demo-api
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/master/openshift-build-all-ephemeral.json \
            -v SOURCE_BRANCH=master \
            -v DEMO_API=api-demo-api.apps.startx.fr \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
+           -v MYSQL_USER="master-user" \
+           -v MYSQL_PASSWORD="master-pwd123" \
            -v MYSQL_DATABASE="demo" | \
 oc create -f -
 sleep 5
@@ -55,15 +55,15 @@ You can create and use theses templates running the following commands
 # Create database component objects
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/master/openshift-build-db-ephemeral.json \
            -v SOURCE_BRANCH=master \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
+           -v MYSQL_USER="master-user" \
+           -v MYSQL_PASSWORD="master-pwd123" \
            -v MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create api frontend component objects
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/master/openshift-build-api.json \
            -v SOURCE_BRANCH=master \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
+           -v MYSQL_USER="master-user" \
+           -v MYSQL_PASSWORD="master-pwd123" \
            -v MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create web frontend component objects
