@@ -92,6 +92,8 @@ This section will help you start a build and deploy of this demo application sta
 deployement strategies.
 
 - [docker strategy](DEMO.docker.md) : Deploy demo application using docker command only
+- [openshift build strategy](DEMO.openshift-build.md) : Deploy demo application using openshift build and deployement configuration
+- [openshift pipeline strategy](DEMO.openshift-pipeline.md) : Deploy demo application using openshift pipeline configuration stategy
 
 
 ## Troubleshooting

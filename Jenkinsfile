@@ -1,57 +1,35 @@
-#!/usr/bin/groovy
-@Library('github.com/fabric8io/fabric8-pipeline-library@master')
-def canaryVersion = "1.0.${env.BUILD_NUMBER}"
-def utils = new io.fabric8.Utils()
-def stashName = "buildpod.${env.JOB_NAME}.${env.BUILD_NUMBER}".replace('-', '_').replace('/', '_')
-def envStage = utils.environmentNamespace('stage')
-def envProd = utils.environmentNamespace('run')
-
-mavenNode {
-  checkout scm
-  if (utils.isCI()){
-
-    mavenCI{}
-    
-  } else if (utils.isCD()){
-    echo 'NOTE: running pipelines for the first time will take longer as build and base docker images are pulled onto the node'
-    container(name: 'maven') {
-
-      stage('Build Release'){
-        mavenCanaryRelease {
-          version = canaryVersion
-        }
-        //stash deployment manifests
-        stash includes: '**/*.yml', name: stashName
-      }
-
-      stage('Rollout to Stage'){
-        apply{
-          environment = envStage
-        }
-      }
-    }
-  }
-}
-
-if (utils.isCD()){
-  node {
-    stage('Approve'){
-       approve {
-         room = null
-         version = canaryVersion
-         environment = 'Stage'
-       }
-     }
-  }
-
-  clientsNode{
-    container(name: 'clients') {
-      stage('Rollout to Run'){
-        unstash stashName
-        apply{
-          environment = envProd
-        }
-      }
-    }
-  }
+try { 
+    timeout(time: 30, unit: 'MINUTES') { 
+        node('nodejs') { 
+            stage('Construction (test)') { 
+                openshiftBuild(buildConfig: 'mariadb-test', showBuildLogs: 'true'); 
+                openshiftBuild(buildConfig: 'api-test', showBuildLogs: 'true'); 
+                openshiftBuild(buildConfig: 'www-test', showBuildLogs: 'true'); 
+            }; 
+            stage('Construction (prod)') { 
+                openshiftBuild(buildConfig: 'mariadb-prod', showBuildLogs: 'true'); 
+                openshiftBuild(buildConfig: 'api-prod', showBuildLogs: 'true'); 
+                openshiftBuild(buildConfig: 'www-prod', showBuildLogs: 'true');
+            };
+            stage('Deploiement (test)') { 
+                openshiftDeploy(deploymentConfig: 'mariadb-test'); 
+                openshiftDeploy(deploymentConfig: 'api-test'); 
+                openshiftDeploy(deploymentConfig: 'www-test'); 
+            }; 
+            stage('Approbation'){ 
+                input 'Valider le test et lancer le déploiement en production ?'; 
+            };
+            stage('Deploiement (prod)') { 
+                openshiftDeploy(deploymentConfig: 'mariadb-prod'); 
+                openshiftDeploy(deploymentConfig: 'api-prod'); 
+                openshiftDeploy(deploymentConfig: 'www-prod');
+            }; 
+        } 
+    } 
+} 
+catch (err) { 
+    echo "in catch block"; 
+    echo "Caught: ${err}"; 
+    currentBuild.result = 'FAILURE';  
+    throw err; 
 }
