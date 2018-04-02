@@ -1,7 +1,7 @@
 {
     "name": "sxapi-demo-openshift-prod-api",
     "description": "API application for the sxapi openshift demo (prod)",
-    "version": "0.0.11",
+    "version": "0.0.10",
     "debug": false,
     "log": {
         "filters": {
@@ -37,9 +37,9 @@
             "server": {
                 "host": "{{{MARIADB_SERVICE_HOST}}}",
                 "port": "3306",
-                "user": "demo-user",
-                "password": "fu8z6D91Hvzm7F9J6pq82",
-                "database": "demo"
+                "user": "{{{MYSQL_USER}}}",
+                "password": "{{{MYSQL_PASSWORD}}}",
+                "database": "{{{MYSQL_DATABASE}}}"
             }
         },
         "serviceinfo-api": {
