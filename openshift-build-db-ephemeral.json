@@ -9,7 +9,7 @@
             "iconClass": "icon-mariadb",
             "tags": "startx,db,database,backend",
             "openshift.io/provider-display-name": "STARTX",
-            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/master/README.md",
+            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/test/README.md",
             "openshift.io/support-url": "https://github.com/startxfr/sxapi-demo-openshift/issues/new"
         }
     },
