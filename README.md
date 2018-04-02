@@ -32,7 +32,13 @@ npm module ([sxapi npm module](https://www.npmjs.com/package/sxapi-core))
 Running the complete agenda of this demo require your local or demo workstation to meet the following requirements :
 - `git` command must be installed
 - internet access must be configured
-- `docker` command must be installed and running (for docker and s2i deployement strategy)
+- `docker` command must be installed and running (for docker and s2i deployement strategy).
+  You must have access to the running `docker` daemon with access to the dockerhub public registry.
+  If you don't have docker runtime, please follow [docker](https://docs.docker.com/)
+  installation guide for [CentOS](https://docs.docker.com/install/linux/docker-ce/centos/), 
+  [RHEL](https://docs.docker.com/install/linux/docker-ee/rhel/), 
+  [Windows](https://docs.docker.com/docker-for-windows/install/)
+  or [MacOS](https://docs.docker.com/docker-for-mac/install/).
 - `s2i` command must be installed (for s2i deployement strategy)
 - `oc` command must be installed (for openshift deployement strategies)
 
@@ -80,13 +86,106 @@ oc new-project <project>
 oc project <project>
 ```
 
-## Deploy your application
+## Deploy demo application
 
-This section will help you start a build and deploy of your application stack using various build and
+This section will help you start a build and deploy of this demo application stack using various build and
 deployement strategies.
 
 
+### Deploy demo application using docker
 
+### Build images using Dockerfile
+
+```bash
+pwd
+# $ ~/sxapi-demo-openshift
+# build api frontend container
+docker build -t sxapi-demo-api api
+# build web frontend container
+docker build -t sxapi-demo-www www
+```
+
+### Deploy database service using docker
+
+```bash
+# deploy database backend container
+docker run -d \
+       --name sxapi-demo-openshift-db \
+       -e SX_VERBOSE=true \
+       -e SX_DEBUG=true \
+       -e MYSQL_USER="dev-user" \
+       -e MYSQL_PASSWORD="dev-pwd123" \
+       -e MYSQL_DATABASE="demo" \
+       -v ./db:/tmp/sql:z \
+       -p 3306:3306 \
+       startx/sv-mariadb:latest \
+       /bin/sx-mariadb run
+sleep 20
+docker logs sxapi-demo-openshift-db
+```
+
+### Deploy API service using docker
+
+```bash
+# deploy api frontend container
+docker run -d \
+       --name sxapi-demo-openshift-api \
+       -e SX_VERBOSE=true \
+       -e SX_DEBUG=true \
+       -e MARIADB_SERVICE_HOST="sxapi-demo-openshift-db" \
+       -e MYSQL_USER="dev-user" \
+       -e MYSQL_PASSWORD="dev-pwd123" \
+       -e MYSQL_DATABASE="demo" \
+       --link sxapi-demo-openshift-db:db \
+       -p 8080:8080 \
+       sxapi-demo-api \
+       /bin/sx-nodejs run
+sleep 1
+docker logs sxapi-demo-openshift-api
+```
+
+### Deploy WWW service using docker
+
+```bash
+# deploy www frontend container
+docker run -d \
+       --name sxapi-demo-openshift-www \
+       -e SX_VERBOSE=true \
+       -e SX_DEBUG=true \
+       -p 8081:8080 \
+       sxapi-demo-www \
+       /bin/sx-nodejs run
+sleep 1
+docker logs sxapi-demo-openshift-www
+```
+
+### Docker strategy workflow
+
+```
+.--------------------------.
+| source code (sxapi-demo) |
+|--------------------------|-.
+| local copy ./www/        | |        .----------------.        .----------------.
+'--------------------------' | docker |   WWW image    | docker | WWW container  |8080
+                             .------->|----------------|------->|----------------|--.
+.--------------------------. | build  | sxapi-demo-www | run    | sxapi-demo-www |  |      .-,(  ),-.    
+|     base image (s2i)     | |        '----------------'        '----------------'  |   .-(          )-. 
+|--------------------------|-'                                                      .->(    internet    )
+| startx/sv-nodejs         |-.                                                      |   '-(          ).-'
+'--------------------------' |        .----------------.        .----------------.  |       '-.( ).-'    
+                             | docker |   API image    | docker | API container  |--'
+.--------------------------. .------->|----------------|------->|----------------|8081
+| source code (sxapi-demo) | | build  | sxapi-demo-api | run    | sxapi-demo-api |
+|--------------------------|-'        '----------------'        '----------------'
+| local copy ./api/        |                                             |
+'--------------------------'                                             |
+                                                                         v 3306
+.--------------------------.                                    .----------------.
+|     base image (s2i)     |                             docker |  DB container  |
+|--------------------------|----------------------------------->|----------------|
+| startx/sv-mariadb        |                             run    | sxapi-demo-db  |
+'--------------------------'                                    '----------------'
+```
 
 
 
