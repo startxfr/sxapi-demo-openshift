@@ -35,7 +35,7 @@ oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/pr
            -v SOURCE_BRANCH=prod \
            -v DEMO_API=api-demo-api.apps.startx.fr \
            -v MYSQL_USER="prod-user" \
-           -v MYSQL_PASSWORD="prod-pwd123" \
+           -v MYSQL_PASSWORD="fu8z6D91Hvzm7F9J6pq82" \
            -v MYSQL_DATABASE="demo" | \
 oc create -f -
 sleep 5
@@ -56,14 +56,14 @@ You can create and use theses templates running the following commands
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/prod/openshift-build-db-ephemeral.json \
            -v SOURCE_BRANCH=prod \
            -v MYSQL_USER="prod-user" \
-           -v MYSQL_PASSWORD="prod-pwd123" \
+           -v MYSQL_PASSWORD="fu8z6D91Hvzm7F9J6pq82" \
            -v MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create api frontend component objects
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/prod/openshift-build-api.json \
            -v SOURCE_BRANCH=prod \
            -v MYSQL_USER="prod-user" \
-           -v MYSQL_PASSWORD="prod-pwd123" \
+           -v MYSQL_PASSWORD="fu8z6D91Hvzm7F9J6pq82" \
            -v MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create web frontend component objects

@@ -2141,7 +2141,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Database password of the application user",
-            "value": "prod-pwd123",
+            "value": "fu8z6D91Hvzm7F9J6pq82",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true

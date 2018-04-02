@@ -496,7 +496,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql user",
             "description": "Default user to create",
-            "value": "demo-user",
+            "value": "prod-user",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
