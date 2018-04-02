@@ -10,7 +10,7 @@
             "iconClass": "icon-php",
             "tags": ",startx,fedora,apache,httpd,php",
             "openshift.io/provider-display-name": "STARTX",
-            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/master/README.md",
+            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/dev/README.md",
             "openshift.io/support-url": "https://github.com/startxfr/sxapi-demo-openshift/issues/new"
         }
     },

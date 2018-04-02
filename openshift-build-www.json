@@ -10,7 +10,7 @@
             "iconClass": "icon-nodejs",
             "tags": "startx,nodejs,web,frontend",
             "openshift.io/provider-display-name": "STARTX",
-            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/master/README.md",
+            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/dev/README.md",
             "openshift.io/support-url": "https://github.com/startxfr/sxapi-demo-openshift/issues/new"
         }
     },
@@ -420,7 +420,7 @@
             "name": "SOURCE_BRANCH",
             "displayName": "Application source-code branch",
             "description": "Name of the branch to use for building this application",
-            "value": "master",
+            "value": "dev",
             "required": true
         },
         {
@@ -455,7 +455,7 @@
             "name": "DEMO_API",
             "displayName": "API base URL",
             "description": "Domain name of the API endpoint to use in this frontend",
-            "value": "api-master-demo.apps.startx.fr",
+            "value": "api-dev-demo.apps.startx.fr",
             "required": true
         },
         {
