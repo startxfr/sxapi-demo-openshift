@@ -9,7 +9,7 @@
             "iconClass": "icon-jenkins",
             "tags": "startx,demo,sxapi,mariadb,nodejs,jenkins",
             "openshift.io/provider-display-name": "STARTX",
-            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/dev/README.md",
+            "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/master/README.md",
             "openshift.io/support-url": "https://github.com/startxfr/sxapi-demo-openshift/issues/new"
         }
     },
@@ -2132,7 +2132,7 @@
             "name": "MYSQL_USER",
             "displayName": "Mysql application user",
             "description": "Database user to create",
-            "value": "dev-user",
+            "value": "master-user",
             "from": "[A-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -2141,7 +2141,7 @@
             "name": "MYSQL_PASSWORD",
             "displayName": "Mysql password",
             "description": "Database password of the application user",
-            "value": "dev-pwd123",
+            "value": "master-pwd123",
             "from": "[A-Z0-9]{16}",
             "generate": "expression",
             "required": true
