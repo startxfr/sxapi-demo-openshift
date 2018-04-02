@@ -6,6 +6,11 @@ try {
                 openshiftBuild(buildConfig: 'api-test', showBuildLogs: 'true'); 
                 openshiftBuild(buildConfig: 'www-test', showBuildLogs: 'true'); 
             }; 
+            stage('Construction (prod)') { 
+                openshiftBuild(buildConfig: 'mariadb-prod', showBuildLogs: 'true'); 
+                openshiftBuild(buildConfig: 'api-prod', showBuildLogs: 'true'); 
+                openshiftBuild(buildConfig: 'www-prod', showBuildLogs: 'true');
+            };
             stage('Deploiement (test)') { 
                 openshiftDeploy(deploymentConfig: 'mariadb-test'); 
                 openshiftDeploy(deploymentConfig: 'api-test'); 
@@ -13,11 +18,6 @@ try {
             }; 
             stage('Approbation'){ 
                 input 'Valider le test et lancer le déploiement en production ?'; 
-            };
-            stage('Construction (prod)') { 
-                openshiftBuild(buildConfig: 'mariadb-prod', showBuildLogs: 'true'); 
-                openshiftBuild(buildConfig: 'api-prod', showBuildLogs: 'true'); 
-                openshiftBuild(buildConfig: 'www-prod', showBuildLogs: 'true');
             };
             stage('Deploiement (prod)') { 
                 openshiftDeploy(deploymentConfig: 'mariadb-prod'); 

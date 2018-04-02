@@ -40,7 +40,7 @@
                 "strategy": {
                     "type": "JenkinsPipeline",
                     "jenkinsPipelineStrategy": {
-                        "jenkinsfile": "try { \n    timeout(time: 30, unit: 'MINUTES') { \n        node('nodejs') { \n            stage('Construction (test)') { \n                openshiftBuild(buildConfig: 'mariadb-test', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'api-test', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'www-test', showBuildLogs: 'true');\n            };\n             stage('Deploiement (test)') { \n                openshiftDeploy(deploymentConfig: 'mariadb-test');\n                openshiftDeploy(deploymentConfig: 'api-test');\n                openshiftDeploy(deploymentConfig: 'www-test');\n            }; \n            stage('Approbation'){ \n                input 'Valider le test et lancer le déploiement en production ?'; \n            };\n            stage('Construction (prod)') {\n                openshiftBuild(buildConfig: 'mariadb-prod', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'api-prod', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'www-prod', showBuildLogs: 'true');\n            };\n            stage('Deploiement (prod)') { \n                openshiftDeploy(deploymentConfig: 'mariadb-prod');\n                openshiftDeploy(deploymentConfig: 'api-prod');\n               openshiftDeploy(deploymentConfig: 'www-prod');\n            }; \n        } \n    } \n} \ncatch (err) {     echo \"in catch block\";\n    echo \"Caught: ${err}\";\n    currentBuild.result = 'FAILURE';\n    throw err; }"
+                        "jenkinsfile": "try { \n    timeout(time: 30, unit: 'MINUTES') { \n        node('nodejs') { \n            stage('Construction (test)') { \n                openshiftBuild(buildConfig: 'mariadb-test', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'api-test', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'www-test', showBuildLogs: 'true');\n            };\n            stage('Construction (prod)') {\n                openshiftBuild(buildConfig: 'mariadb-prod', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'api-prod', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'www-prod', showBuildLogs: 'true');\n            };\n             stage('Deploiement (test)') { \n                openshiftDeploy(deploymentConfig: 'mariadb-test');\n                openshiftDeploy(deploymentConfig: 'api-test');\n                openshiftDeploy(deploymentConfig: 'www-test');\n            }; \n            stage('Approbation'){ \n                input 'Valider le test et lancer le déploiement en production ?'; \n            };\n            stage('Deploiement (prod)') { \n                openshiftDeploy(deploymentConfig: 'mariadb-prod');\n                openshiftDeploy(deploymentConfig: 'api-prod');\n               openshiftDeploy(deploymentConfig: 'www-prod');\n            }; \n        } \n    } \n} \ncatch (err) {     echo \"in catch block\";\n    echo \"Caught: ${err}\";\n    currentBuild.result = 'FAILURE';\n    throw err; }"
                     }
                 },
                 "triggers": [
@@ -331,7 +331,7 @@
                 }
             },
             "stringData": {
-                "DEMO_API": "${DEMO_API}"
+                "DEMO_API": "api-test-${DEMO_API}"
             }
         },
         {
@@ -351,7 +351,8 @@
                 }
             },
             "spec": {
-                "triggers": [ ],
+                "triggers": [
+                ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -422,7 +423,8 @@
                 }
             },
             "spec": {
-                "triggers": [ ],
+                "triggers": [
+                ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -473,7 +475,8 @@
                 }
             },
             "spec": {
-                "triggers": [ ],
+                "triggers": [
+                ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -528,7 +531,7 @@
                 "strategy": {
                     "type": "Recreate",
                     "recreateParams": {
-                        "timeoutSeconds": 50
+                        "timeoutSeconds": 60
                     },
                     "resources": {}
                 },
@@ -646,7 +649,7 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 20,
+                                    "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
                                     "periodSeconds": 10,
                                     "successThreshold": 1,
@@ -659,7 +662,7 @@
                                             "isReady"
                                         ]
                                     },
-                                    "initialDelaySeconds": 30,
+                                    "initialDelaySeconds": 15,
                                     "timeoutSeconds": 2,
                                     "periodSeconds": 20,
                                     "successThreshold": 1,
@@ -823,9 +826,9 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 5,
+                                    "initialDelaySeconds": 2,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 20,
+                                    "periodSeconds": 5,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -835,9 +838,9 @@
                                         "port": 8080,
                                         "scheme": "HTTP"
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -974,9 +977,9 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 5,
+                                    "initialDelaySeconds": 2,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 20,
+                                    "periodSeconds": 5,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -986,9 +989,9 @@
                                         "port": 8080,
                                         "scheme": "HTTP"
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -1228,7 +1231,7 @@
                 }
             },
             "stringData": {
-                "DEMO_API": "${DEMO_API}"
+                "DEMO_API": "api-prod-${DEMO_API}"
             }
         },
         {
@@ -1248,7 +1251,8 @@
                 }
             },
             "spec": {
-                "triggers": [ ],
+                "triggers": [
+                ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -1319,7 +1323,8 @@
                 }
             },
             "spec": {
-                "triggers": [ ],
+                "triggers": [
+                ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -1370,7 +1375,8 @@
                 }
             },
             "spec": {
-                "triggers": [ ],
+                "triggers": [
+                ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -1425,7 +1431,7 @@
                 "strategy": {
                     "type": "Recreate",
                     "recreateParams": {
-                        "timeoutSeconds": 50
+                        "timeoutSeconds": 60
                     },
                     "resources": {}
                 },
@@ -1543,7 +1549,7 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 20,
+                                    "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
                                     "periodSeconds": 10,
                                     "successThreshold": 1,
@@ -1556,7 +1562,7 @@
                                             "isReady"
                                         ]
                                     },
-                                    "initialDelaySeconds": 25,
+                                    "initialDelaySeconds": 15,
                                     "timeoutSeconds": 2,
                                     "periodSeconds": 20,
                                     "successThreshold": 1,
@@ -1720,9 +1726,9 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 5,
+                                    "initialDelaySeconds": 2,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 20,
+                                    "periodSeconds": 5,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -1732,9 +1738,9 @@
                                         "port": 8080,
                                         "scheme": "HTTP"
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -1871,9 +1877,9 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 5,
+                                    "initialDelaySeconds": 2,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 20,
+                                    "periodSeconds": 5,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -1883,9 +1889,9 @@
                                         "port": 8080,
                                         "scheme": "HTTP"
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -2101,9 +2107,9 @@
         },
         {
             "name": "DEMO_API",
-            "displayName": "API fqdn",
-            "description": "Domain name of the API endpoint to use in this frontend (api-xxxxx.apps.startx.fr were xxxxx is your project namespace)",
-            "value": "api-dev-demo.apps.startx.fr",
+            "displayName": "API fqdn suffix",
+            "description": "Domain name suffix for the API endpoint to use in this frontend (ex: xxxxx.apps.startx.fr were xxxxx is your project namespace)",
+            "value": "demo.apps.startx.fr",
             "required": true
         },
         {

@@ -1,75 +1,41 @@
-# Deploy demo application using Openshift build config
+# Deploy demo application using Openshift pipeline
 
 This section of the [sxapi-demo-openshift](https://github.com/startxfr/sxapi-demo-openshift)
-will show you how to run the sxapi-demo application stack only using openshift commands.
+will show you how to run the sxapi-demo application stack using openshift Openshift pipeline
+strategy. Jenkins will be used as a CI/CD backend for your deployement process.
 
 To run this demo, you must have have a demo environement setup configured. Follow guidelines 
 to configure the [workstation environement](https://github.com/startxfr/sxapi-demo-openshift#setup-workstation-environement)
 and [openshift environement](https://github.com/startxfr/sxapi-demo-openshift#setup-openshift-environement).
 
-## Openshift templates
+## Openshift template
 
-### Full template
-
-This demo provide an [all-in-one ephemeral template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-all-ephemeral.json)
-to build and deploy the full application stack using build config and deployement config for every services
-part of this example.
+This demo provide an [all-in-one pipeline template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-pipeline-all-ephemeral.json)
+to build and deploy test and run stagging environement each containing the full application stack.
 
 This template will create the following objects :
+- **1 BuildConfig** describing the Jenkins pipeline workflow and CI/CD orchestration
 - **1 ImageStream** with 2 tags linked to public bases images `startx/sv-mariadb` and `startx/sv-nodejs`
-- **3 ImageStream** with 1 `latest` tag each and used for hosting the **mariadb**, **api** and **www** build image
-- **1 Secret** mariadb holding `MYSQL_ROOT_PASSWORD`, `MYSQL_USER` and `MYSQL_PASSWORD` credentials
-- **3 BuildConfig** describing how to build the **mariadb**, **api** and **www** images
-- **3 DeploymentConfig** describing how to deploy and run the **mariadb**, **api** and **www** components
-- **1 Service** to expose **mariadb** to other pods (created by the deploymentConfig)
-- **2 Service** to expose **api** and **www** internaly and linked to route objects
-- **2 Route** to expose **api** and **www** externaly
+- **3 ImageStream** with `latest`, `test` and `prod` tag each and used for hosting the **mariadb**, **api** and **www** build image coresponding to both stages
+- **2 Secret** `mariadb-test` and `mariadb-prod` holding `MYSQL_ROOT_PASSWORD`, `MYSQL_USER` and `MYSQL_PASSWORD` credentials
+- **6 BuildConfig** describing how to build the **mariadb**, **api** and **www** images for both `test` and `prod` stage
+- **6 DeploymentConfig** describing how to deploy and run the **mariadb**, **api** and **www** components for both `test` and `prod` stage
+- **2 Service** to expose **mariadb** to other pods (created by the deploymentConfig) for both `test` and `prod` stage
+- **4 Service** to expose **api** and **www** internaly and linked to route objects for both `test` and `prod` stage
+- **4 Route** to expose **api** and **www** externaly for both `test` and `prod` stage
 
-You can create and use this template running the following command. You can only run it one time per project with an 
-identical SOURCE_BRANCH. Because Source branch corespond to different stage of the application, you can choose 
-to deploy various stage with the same project (shared namespace) or in differents projects (isolated namespace).
-
-```bash
-oc new-project demo-api
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-all-ephemeral.json \
-           -v SOURCE_BRANCH=dev \
-           -v DEMO_API=api-demo-api.apps.startx.fr \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
-oc create -f -
-sleep 5
-oc get all
-```
-
-### Single component templates
-
-This demo provide also individual templates to build and deploy the full application stack step by step.
-- [build database template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-db-ephemeral.json),
-- [build api template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-api.json) and
-- [build www template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-www.json)
-
-You can create and use theses templates running the following commands
+You can create and use this template running the following command. You can only run it one time per project. 
+This template create both stage resources into the same project (shared namespace) for demo simplification. In production,
+we would prefer create one project per stage in order to isolate environments and flexibility in managing hardware resources, 
+users, network and node allocation.
 
 ```bash
-# Create database component objects
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-db-ephemeral.json \
-           -v SOURCE_BRANCH=dev \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
+oc new-project demo
+oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-pipeline-all-ephemeral.json \
+           -v DEMO_API=demo.apps.startx.fr \
+           -v MYSQL_USER="demouser" \
+           -v MYSQL_PASSWORD="demopwd123" \
            -v MYSQL_DATABASE="demo" | \
-oc create -f -
-# Create api frontend component objects
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-api.json \
-           -v SOURCE_BRANCH=dev \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
-oc create -f -
-# Create web frontend component objects
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-www.json \
-           -v SOURCE_BRANCH=dev \
-           -v DEMO_API=openshift.demo.startx.fr | \
 oc create -f -
 sleep 5
 oc get all
