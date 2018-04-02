@@ -37,9 +37,9 @@
             "server": {
                 "host": "{{{MARIADB_SERVICE_HOST}}}",
                 "port": "3306",
-                "user": "dev-user",
-                "password": "dev-pwd123",
-                "database": "demo"
+                "user": "{{{MYSQL_USER}}}",
+                "password": "{{{MYSQL_PASSWORD}}}",
+                "database": "{{{MYSQL_DATABASE}}}"
             }
         },
         "serviceinfo-api": {

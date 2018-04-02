@@ -134,7 +134,7 @@ oc login -u <user>:<pwd> https://<master_domain>
 
 ## Troubleshooting
 
-If you run into difficulties installing or running this demo, you can [create an issue](https://github.com/startxfr/sxapi-core/issues/new).
+If you run into difficulties installing or running this demo, you can [create an issue](https://github.com/startxfr/sxapi-demo-openshift/issues/new).
 
 ## Built With
 
