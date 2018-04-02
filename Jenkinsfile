@@ -1,5 +1,5 @@
 try { 
-    timeout(time: 15, unit: 'MINUTES') { 
+    timeout(time: 30, unit: 'MINUTES') { 
         node('nodejs') { 
             stage('Construction (test)') { 
                 openshiftBuild(buildConfig: 'mariadb-test', showBuildLogs: 'true'); 

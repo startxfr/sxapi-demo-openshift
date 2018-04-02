@@ -5,9 +5,9 @@
         "name": "sxapi-demo-pipeline-template",
         "annotations": {
             "openshift.io/display-name": "SXAPI Demo (Pipeline)",
-            "description": "Template for building a full demo application (frontend + api + database) using CI/CD pipeline build strategy in an openshift PaaS",
-            "iconClass": "icon-nodejs",
-            "tags": "startx,demo,sxapi,mariadb",
+            "description": "Template for building a full demo application (frontend + api + database) using Jenkins CI/CD pipeline build strategy integrated with openshift PaaS",
+            "iconClass": "icon-jenkins",
+            "tags": "startx,demo,sxapi,mariadb,nodejs,jenkins",
             "openshift.io/provider-display-name": "STARTX",
             "openshift.io/documentation-url": "https://github.com/startxfr/sxapi-demo-openshift/blob/dev/README.md",
             "openshift.io/support-url": "https://github.com/startxfr/sxapi-demo-openshift/issues/new"
@@ -33,14 +33,14 @@
                 },
                 "annotations": {
                     "openshift.io/generated-by": "STARTX",
-                    "pipeline.alpha.openshift.io/uses": "[{\"name\": \"www-test\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"api-test\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"mariadb-test\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"}]"
+                    "pipeline.alpha.openshift.io/uses": "[{\"name\": \"www-test\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"api-test\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"mariadb-test\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"www-prod\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"api-prod\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"},{\"name\": \"mariadb-prod\", \"namespace\": \"\", \"kind\": \"DeploymentConfig\"}]"
                 }
             },
             "spec": {
                 "strategy": {
                     "type": "JenkinsPipeline",
                     "jenkinsPipelineStrategy": {
-                        "jenkinsfile": "try { timeout(time: 10, unit: 'MINUTES') { node('nodejs') { stage('Construction') { openshiftBuild(buildConfig: 'www-test', showBuildLogs: 'true'); }; stage('Test') { openshiftDeploy(deploymentConfig: 'www-test'); }; stage('Approbation'){ input 'Valider le deploiement en production ?'; }; stage('Production') { openshiftDeploy(deploymentConfig: 'www-test'); }; } } } catch (err) { echo \"in catch block\"; echo \"Caught: ${err}\"; currentBuild.result = 'FAILURE';  throw err; }"
+                        "jenkinsfile": "try { \n    timeout(time: 30, unit: 'MINUTES') { \n        node('nodejs') { \n            stage('Construction (test)') { \n                openshiftBuild(buildConfig: 'mariadb-test', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'api-test', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'www-test', showBuildLogs: 'true');\n            };\n             stage('Deploiement (test)') { \n                openshiftDeploy(deploymentConfig: 'mariadb-test');\n                openshiftDeploy(deploymentConfig: 'api-test');\n                openshiftDeploy(deploymentConfig: 'www-test');\n            }; \n            stage('Approbation'){ \n                input 'Valider le test et lancer le déploiement en production ?'; \n            };\n            stage('Construction (prod)') {\n                openshiftBuild(buildConfig: 'mariadb-prod', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'api-prod', showBuildLogs: 'true');\n                openshiftBuild(buildConfig: 'www-prod', showBuildLogs: 'true');\n            };\n            stage('Deploiement (prod)') { \n                openshiftDeploy(deploymentConfig: 'mariadb-prod');\n                openshiftDeploy(deploymentConfig: 'api-prod');\n               openshiftDeploy(deploymentConfig: 'www-prod');\n            }; \n        } \n    } \n} \ncatch (err) {     echo \"in catch block\";\n    echo \"Caught: ${err}\";\n    currentBuild.result = 'FAILURE';\n    throw err; }"
                     }
                 },
                 "triggers": [
@@ -304,6 +304,7 @@
                 "creationTimestamp": null,
                 "labels": {
                     "app": "mariadb-test",
+                    "stage": "test",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -323,6 +324,7 @@
                 "creationTimestamp": null,
                 "labels": {
                     "app": "www-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -339,6 +341,7 @@
                 "name": "mariadb-test",
                 "labels": {
                     "app": "mariadb-test",
+                    "stage": "test",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -348,12 +351,7 @@
                 }
             },
             "spec": {
-                "triggers": [
-                    {
-                        "type": "ImageChange",
-                        "imageChange": {}
-                    }
-                ],
+                "triggers": [ ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -414,6 +412,7 @@
                 "name": "api-test",
                 "labels": {
                     "app": "api-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -423,12 +422,7 @@
                 }
             },
             "spec": {
-                "triggers": [
-                    {
-                        "type": "ImageChange",
-                        "imageChange": {}
-                    }
-                ],
+                "triggers": [ ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -469,6 +463,7 @@
                 "name": "www-test",
                 "labels": {
                     "app": "www-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -478,12 +473,7 @@
                 }
             },
             "spec": {
-                "triggers": [
-                    {
-                        "type": "ImageChange",
-                        "imageChange": {}
-                    }
-                ],
+                "triggers": [ ],
                 "runPolicy": "SerialLatestOnly",
                 "source": {
                     "type": "Git",
@@ -525,6 +515,7 @@
                 "generation": 2,
                 "labels": {
                     "app": "mariadb-test",
+                    "stage": "test",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -535,13 +526,9 @@
             },
             "spec": {
                 "strategy": {
-                    "type": "Rolling",
-                    "rollingParams": {
-                        "updatePeriodSeconds": 1,
-                        "intervalSeconds": 1,
-                        "timeoutSeconds": 50,
-                        "maxUnavailable": "25%",
-                        "maxSurge": "25%"
+                    "type": "Recreate",
+                    "recreateParams": {
+                        "timeoutSeconds": 50
                     },
                     "resources": {}
                 },
@@ -573,6 +560,7 @@
                     "metadata": {
                         "labels": {
                             "app": "mariadb-test",
+                            "stage": "test",
                             "type": "backend",
                             "provider": "startx",
                             "template": "sxapi-demo-pipeline-template",
@@ -671,7 +659,7 @@
                                             "isReady"
                                         ]
                                     },
-                                    "initialDelaySeconds": 25,
+                                    "initialDelaySeconds": 30,
                                     "timeoutSeconds": 2,
                                     "periodSeconds": 20,
                                     "successThreshold": 1,
@@ -690,7 +678,7 @@
                             }
                         ],
                         "restartPolicy": "Always",
-                        "terminationGracePeriodSeconds": 40,
+                        "terminationGracePeriodSeconds": 20,
                         "dnsPolicy": "ClusterFirst",
                         "securityContext": {}
                     }
@@ -711,6 +699,7 @@
                 "generation": 2,
                 "labels": {
                     "app": "api-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -749,7 +738,7 @@
                         "type": "ConfigChange"
                     }
                 ],
-                "replicas": 2,
+                "replicas": 1,
                 "test": false,
                 "selector": {
                     "app": "api-test",
@@ -759,6 +748,7 @@
                     "metadata": {
                         "labels": {
                             "app": "api-test",
+                            "stage": "test",
                             "type": "frontend",
                             "provider": "startx",
                             "template": "sxapi-demo-pipeline-template",
@@ -856,7 +846,7 @@
                             }
                         ],
                         "restartPolicy": "Always",
-                        "terminationGracePeriodSeconds": 30,
+                        "terminationGracePeriodSeconds": 20,
                         "dnsPolicy": "ClusterFirst",
                         "securityContext": {}
                     }
@@ -864,7 +854,7 @@
             },
             "status": {
                 "observedGeneration": 2,
-                "replicas": 2,
+                "replicas": 1,
                 "updatedReplicas": 1,
                 "availableReplicas": 1
             }
@@ -877,6 +867,7 @@
                 "generation": 2,
                 "labels": {
                     "app": "www-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -915,7 +906,7 @@
                         "type": "ConfigChange"
                     }
                 ],
-                "replicas": 2,
+                "replicas": 1,
                 "test": false,
                 "selector": {
                     "app": "www-test",
@@ -925,6 +916,7 @@
                     "metadata": {
                         "labels": {
                             "app": "www-test",
+                            "stage": "test",
                             "type": "frontend",
                             "provider": "startx",
                             "template": "sxapi-demo-pipeline-template",
@@ -1005,7 +997,7 @@
                             }
                         ],
                         "restartPolicy": "Always",
-                        "terminationGracePeriodSeconds": 30,
+                        "terminationGracePeriodSeconds": 20,
                         "dnsPolicy": "ClusterFirst",
                         "securityContext": {}
                     }
@@ -1013,7 +1005,7 @@
             },
             "status": {
                 "observedGeneration": 2,
-                "replicas": 2,
+                "replicas": 1,
                 "updatedReplicas": 1,
                 "availableReplicas": 1
             }
@@ -1025,6 +1017,7 @@
                 "name": "mariadb-test",
                 "labels": {
                     "app": "mariadb-test",
+                    "stage": "test",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -1062,6 +1055,7 @@
                 "name": "api-test",
                 "labels": {
                     "app": "api-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -1097,6 +1091,7 @@
                 "name": "www-test",
                 "labels": {
                     "app": "www-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -1131,6 +1126,7 @@
                 "name": "api-test",
                 "labels": {
                     "app": "api-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -1167,6 +1163,7 @@
                 "name": "www-test",
                 "labels": {
                     "app": "www-test",
+                    "stage": "test",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-pipeline-template"
@@ -1179,6 +1176,903 @@
                 "to": {
                     "kind": "Service",
                     "name": "www-test",
+                    "weight": 100
+                }
+            },
+            "status": {
+                "ingress": [
+                    {
+                        "routerName": "router",
+                        "conditions": [
+                            {
+                                "type": "Admitted",
+                                "status": "True"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb-prod",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "mariadb-prod",
+                    "stage": "prod",
+                    "type": "backend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                }
+            },
+            "stringData": {
+                "MYSQL_ROOT_PASSWORD": "${MYSQL_ROOT_PASSWORD}",
+                "MYSQL_USER": "${MYSQL_USER}",
+                "MYSQL_PASSWORD": "${MYSQL_PASSWORD}"
+            }
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www-prod",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "www-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                }
+            },
+            "stringData": {
+                "DEMO_API": "${DEMO_API}"
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb-prod",
+                "labels": {
+                    "app": "mariadb-prod",
+                    "stage": "prod",
+                    "type": "backend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "triggers": [ ],
+                "runPolicy": "SerialLatestOnly",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/startxfr/sxapi-demo-openshift.git",
+                        "ref": "prod"
+                    },
+                    "contextDir": "db"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "startx-${BASE_IMAGE_TAG}:mariadb"
+                        },
+                        "env": [
+                            {
+                                "name": "SX_VERBOSE",
+                                "value": "true"
+                            },
+                            {
+                                "name": "SX_DEBUG",
+                                "value": "true"
+                            },
+                            {
+                                "name": "MYSQL_ROOT_PASSWORD",
+                                "value": "${MYSQL_ROOT_PASSWORD}"
+                            },
+                            {
+                                "name": "MYSQL_USER",
+                                "value": "${MYSQL_USER}"
+                            },
+                            {
+                                "name": "MYSQL_PASSWORD",
+                                "value": "${MYSQL_PASSWORD}"
+                            },
+                            {
+                                "name": "MYSQL_DATABASE",
+                                "value": "${MYSQL_DATABASE}"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "mariadb:prod"
+                    }
+                },
+                "resources": {}
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api-prod",
+                "labels": {
+                    "app": "api-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "triggers": [ ],
+                "runPolicy": "SerialLatestOnly",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/startxfr/sxapi-demo-openshift.git",
+                        "ref": "prod"
+                    },
+                    "contextDir": "api"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "startx-${BASE_IMAGE_TAG}:nodejs"
+                        },
+                        "env": [
+                            {
+                                "name": "SX_VERBOSE",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "api:prod"
+                    }
+                },
+                "resources": {}
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www-prod",
+                "labels": {
+                    "app": "www-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "triggers": [ ],
+                "runPolicy": "SerialLatestOnly",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/startxfr/sxapi-demo-openshift.git",
+                        "ref": "prod"
+                    },
+                    "contextDir": "www"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "startx-${BASE_IMAGE_TAG}:nodejs"
+                        },
+                        "env": [
+                            {
+                                "name": "SX_VERBOSE",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "www:prod"
+                    }
+                },
+                "resources": {}
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb-prod",
+                "generation": 2,
+                "labels": {
+                    "app": "mariadb-prod",
+                    "stage": "prod",
+                    "type": "backend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate",
+                    "recreateParams": {
+                        "timeoutSeconds": 50
+                    },
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": false,
+                            "containerNames": [
+                                "mariadb-prod"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "mariadb:prod"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "mariadb-prod",
+                    "deploymentconfig": "mariadb-prod"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app": "mariadb-prod",
+                            "stage": "prod",
+                            "type": "backend",
+                            "provider": "startx",
+                            "template": "sxapi-demo-pipeline-template",
+                            "deploymentconfig": "mariadb-prod"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "STARTX"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "mariadb-prod",
+                                "image": " ",
+                                "env": [
+                                    {
+                                        "name": "SX_VERBOSE",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "SX_DEBUG",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "MYSQL_ROOT_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-prod",
+                                                "key": "MYSQL_ROOT_PASSWORD"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-prod",
+                                                "key": "MYSQL_USER"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-prod",
+                                                "key": "MYSQL_PASSWORD"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "${MYSQL_DATABASE}"
+                                    }
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 3306,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "command": [
+                                    "/bin/sx-mariadb"
+                                ],
+                                "args": [
+                                    "run"
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "memory": "512Mi"
+                                    }
+                                },
+                                "volumeMounts": [
+                                    {
+                                        "name": "mariadb-prod-data",
+                                        "mountPath": "/data"
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/sx-mariadb",
+                                            "isLive"
+                                        ]
+                                    },
+                                    "initialDelaySeconds": 20,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/sx-mariadb",
+                                            "isReady"
+                                        ]
+                                    },
+                                    "initialDelaySeconds": 25,
+                                    "timeoutSeconds": 2,
+                                    "periodSeconds": 20,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "mariadb-prod-data",
+                                "emptyDir": {
+                                    "medium": ""
+                                }
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 20,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "availableReplicas": 1
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api-prod",
+                "generation": 2,
+                "labels": {
+                    "app": "api-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 20,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": false,
+                            "containerNames": [
+                                "api-prod"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "api:prod"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 2,
+                "test": false,
+                "selector": {
+                    "app": "api-prod",
+                    "deploymentconfig": "api-prod"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app": "api-prod",
+                            "stage": "prod",
+                            "type": "frontend",
+                            "provider": "startx",
+                            "template": "sxapi-demo-pipeline-template",
+                            "deploymentconfig": "api-prod"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "STARTX"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "api-prod",
+                                "image": " ",
+                                "env": [
+                                    {
+                                        "name": "SX_VERBOSE",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "SX_DEBUG",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "MARIADB_SERVICE_HOST",
+                                        "value": "mariadb-prod"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-prod",
+                                                "key": "MYSQL_USER"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-prod",
+                                                "key": "MYSQL_PASSWORD"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "${MYSQL_DATABASE}"
+                                    }
+                                ],
+                                "command": [
+                                    "/bin/sx-nodejs"
+                                ],
+                                "args": [
+                                    "run"
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "memory": "128Mi"
+                                    }
+                                },
+                                "livenessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/sx-nodejs",
+                                            "isLive"
+                                        ]
+                                    },
+                                    "initialDelaySeconds": 5,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 20,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/health",
+                                        "port": 8080,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 10,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 15,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 20,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 2,
+                "updatedReplicas": 1,
+                "availableReplicas": 1
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www-prod",
+                "generation": 2,
+                "labels": {
+                    "app": "www-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 20,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": false,
+                            "containerNames": [
+                                "www-prod"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "www:prod"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 2,
+                "test": false,
+                "selector": {
+                    "app": "www-prod",
+                    "deploymentconfig": "www-prod"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app": "www-prod",
+                            "stage": "prod",
+                            "type": "frontend",
+                            "provider": "startx",
+                            "template": "sxapi-demo-pipeline-template",
+                            "deploymentconfig": "www-prod"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "STARTX"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "www-prod",
+                                "image": " ",
+                                "env": [
+                                    {
+                                        "name": "SX_VERBOSE",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "SX_DEBUG",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "DEMO_API",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "www-prod",
+                                                "key": "DEMO_API"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "command": [
+                                    "/bin/sx-nodejs"
+                                ],
+                                "args": [
+                                    "run"
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "memory": "128Mi"
+                                    }
+                                },
+                                "livenessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/sx-nodejs",
+                                            "isLive"
+                                        ]
+                                    },
+                                    "initialDelaySeconds": 5,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 20,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/health",
+                                        "port": 8080,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 10,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 15,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 20,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 2,
+                "updatedReplicas": 1,
+                "availableReplicas": 1
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb-prod",
+                "labels": {
+                    "app": "mariadb-prod",
+                    "stage": "prod",
+                    "type": "backend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX",
+                    "template.openshift.io/expose-uri": "mysql://{.spec.clusterIP}:{.spec.ports[?(.name==\"mysql\")].port}"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "mysql",
+                        "protocol": "TCP",
+                        "port": 3306,
+                        "targetPort": 3306,
+                        "nodePort": 0
+                    }
+                ],
+                "selector": {
+                    "app": "mariadb-prod",
+                    "deploymentconfig": "mariadb-prod"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api-prod",
+                "labels": {
+                    "app": "api-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "service.alpha.openshift.io/dependencies": "[{\"name\": \"mariadb-prod\", \"namespace\": \"\", \"kind\": \"Service\"}]",
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app": "api-prod",
+                    "deploymentconfig": "api-prod"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www-prod",
+                "labels": {
+                    "app": "www-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app": "www-prod",
+                    "deploymentconfig": "www-prod"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "api-prod",
+                "labels": {
+                    "app": "api-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "to": {
+                    "kind": "Service",
+                    "name": "api-prod",
+                    "weight": 100
+                }
+            },
+            "status": {
+                "ingress": [
+                    {
+                        "routerName": "router",
+                        "conditions": [
+                            {
+                                "type": "Admitted",
+                                "status": "True"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www-prod",
+                "labels": {
+                    "app": "www-prod",
+                    "stage": "prod",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-pipeline-template"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "to": {
+                    "kind": "Service",
+                    "name": "www-prod",
                     "weight": 100
                 }
             },
