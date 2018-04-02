@@ -32,5 +32,6 @@ db:
   ports:
     - "3306:3306"
   volumes:
-  - "./www:/tmp/sql:z"
-  command: ["npm" , "start"]
+  - "./db:/tmp/sql:z"
+  command: ["/bin/sx-mariadb" , "build" ]
+#  command: ["/bin/sx-mariadb" , "run" ]

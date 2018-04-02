@@ -72,14 +72,14 @@
             "kind": "ImageStream",
             "apiVersion": "v1",
             "metadata": {
-                "name": "mariadb",
+                "name": "mariadb-${SOURCE_BRANCH}",
                 "annotations": {
-                    "openshift.io/display-name": "SXAPI Demo - MariaDB",
+                    "openshift.io/display-name": "SXAPI Demo - MariaDB (${SOURCE_BRANCH})",
                     "openshift.io/generated-by": "STARTX"
                 },
                 "labels": {
                     "base-image": "startx-${BASE_IMAGE_TAG}-mariadb",
-                    "app": "mariadb",
+                    "app": "mariadb-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -90,7 +90,7 @@
                     {
                         "name": "latest",
                         "annotations": {
-                            "openshift.io/display-name": "SXAPI Demo - MariaDB",
+                            "openshift.io/display-name": "SXAPI Demo - MariaDB (${SOURCE_BRANCH})",
                             "description": "MariaDB database for the SXAPI Demo",
                             "iconClass": "icon-mariadb",
                             "tags": "startx,mariadb,db,database,mariadb",
@@ -105,14 +105,14 @@
             "kind": "ImageStream",
             "apiVersion": "v1",
             "metadata": {
-                "name": "api",
+                "name": "api-${SOURCE_BRANCH}",
                 "annotations": {
-                    "openshift.io/display-name": "SXAPI Demo - API",
+                    "openshift.io/display-name": "SXAPI Demo - API (${SOURCE_BRANCH})",
                     "openshift.io/generated-by": "STARTX"
                 },
                 "labels": {
                     "base-image": "startx-${BASE_IMAGE_TAG}-nodejs",
-                    "app": "api",
+                    "app": "api-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -123,7 +123,7 @@
                     {
                         "name": "latest",
                         "annotations": {
-                            "openshift.io/display-name": "SXAPI Demo - API",
+                            "openshift.io/display-name": "SXAPI Demo - API (${SOURCE_BRANCH})",
                             "description": "NodeJS API frontend for the SXAPI Demo",
                             "iconClass": "icon-nodejs",
                             "tags": "startx,nodejs,frontend,api,api",
@@ -138,14 +138,14 @@
             "kind": "ImageStream",
             "apiVersion": "v1",
             "metadata": {
-                "name": "www",
+                "name": "www-${SOURCE_BRANCH}",
                 "annotations": {
-                    "openshift.io/display-name": "SXAPI Demo - WWW",
+                    "openshift.io/display-name": "SXAPI Demo - WWW (${SOURCE_BRANCH})",
                     "openshift.io/generated-by": "STARTX"
                 },
                 "labels": {
                     "base-image": "startx-${BASE_IMAGE_TAG}-nodejs",
-                    "app": "www",
+                    "app": "www-${SOURCE_BRANCH}",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -156,7 +156,7 @@
                     {
                         "name": "latest",
                         "annotations": {
-                            "openshift.io/display-name": "SXAPI Demo - WWW",
+                            "openshift.io/display-name": "SXAPI Demo - WWW (${SOURCE_BRANCH})",
                             "description": "NodeJS Web frontend for the SXAPI Demo",
                             "iconClass": "icon-nodejs",
                             "tags": "startx,nodejs,frontend,www",
@@ -171,10 +171,10 @@
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
-                "name": "mariadb",
+                "name": "mariadb-${SOURCE_BRANCH}",
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "mariadb",
+                    "app": "mariadb-${SOURCE_BRANCH}",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -190,10 +190,10 @@
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
-                "name": "www",
+                "name": "www-${SOURCE_BRANCH}",
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "www",
+                    "app": "www-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -207,9 +207,9 @@
             "kind": "BuildConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "mariadb",
+                "name": "mariadb-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "mariadb",
+                    "app": "mariadb-${SOURCE_BRANCH}",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -287,7 +287,7 @@
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "mariadb:latest"
+                        "name": "mariadb-${SOURCE_BRANCH}:latest"
                     }
                 },
                 "resources": {}
@@ -297,9 +297,9 @@
             "kind": "BuildConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "api",
+                "name": "api-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "api",
+                    "app": "api-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -357,7 +357,7 @@
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "api:latest"
+                        "name": "api-${SOURCE_BRANCH}:latest"
                     }
                 },
                 "resources": {}
@@ -367,9 +367,9 @@
             "kind": "BuildConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "www",
+                "name": "www-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "www",
+                    "app": "www-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -427,7 +427,7 @@
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "www:latest"
+                        "name": "www-${SOURCE_BRANCH}:latest"
                     }
                 },
                 "resources": {}
@@ -437,10 +437,10 @@
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "mariadb",
+                "name": "mariadb-${SOURCE_BRANCH}",
                 "generation": 2,
                 "labels": {
-                    "app": "mariadb",
+                    "app": "mariadb-${SOURCE_BRANCH}",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -455,7 +455,7 @@
                     "rollingParams": {
                         "updatePeriodSeconds": 1,
                         "intervalSeconds": 1,
-                        "timeoutSeconds": 40,
+                        "timeoutSeconds": 50,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
                     },
@@ -467,11 +467,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "mariadb"
+                                "mariadb-${SOURCE_BRANCH}"
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "mariadb:latest"
+                                "name": "mariadb-${SOURCE_BRANCH}:latest"
                             }
                         }
                     },
@@ -482,17 +482,17 @@
                 "replicas": 1,
                 "test": false,
                 "selector": {
-                    "app": "mariadb",
-                    "deploymentconfig": "mariadb"
+                    "app": "mariadb-${SOURCE_BRANCH}",
+                    "deploymentconfig": "mariadb-${SOURCE_BRANCH}"
                 },
                 "template": {
                     "metadata": {
                         "labels": {
-                            "app": "mariadb",
+                            "app": "mariadb-${SOURCE_BRANCH}",
                             "type": "backend",
                             "provider": "startx",
                             "template": "sxapi-demo-ephemeral-template",
-                            "deploymentconfig": "mariadb"
+                            "deploymentconfig": "mariadb-${SOURCE_BRANCH}"
                         },
                         "annotations": {
                             "openshift.io/generated-by": "STARTX"
@@ -501,7 +501,7 @@
                     "spec": {
                         "containers": [
                             {
-                                "name": "mariadb",
+                                "name": "mariadb-${SOURCE_BRANCH}",
                                 "image": " ",
                                 "env": [
                                     {
@@ -516,7 +516,7 @@
                                         "name": "MYSQL_ROOT_PASSWORD",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "mariadb",
+                                                "name": "mariadb-${SOURCE_BRANCH}",
                                                 "key": "MYSQL_ROOT_PASSWORD"
                                             }
                                         }
@@ -525,7 +525,7 @@
                                         "name": "MYSQL_USER",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "mariadb",
+                                                "name": "mariadb-${SOURCE_BRANCH}",
                                                 "key": "MYSQL_USER"
                                             }
                                         }
@@ -534,7 +534,7 @@
                                         "name": "MYSQL_PASSWORD",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "mariadb",
+                                                "name": "mariadb-${SOURCE_BRANCH}",
                                                 "key": "MYSQL_PASSWORD"
                                             }
                                         }
@@ -563,7 +563,7 @@
                                 },
                                 "volumeMounts": [
                                     {
-                                        "name": "mariadb-data",
+                                        "name": "mariadb-${SOURCE_BRANCH}-data",
                                         "mountPath": "/data"
                                     }
                                 ],
@@ -574,7 +574,7 @@
                                             "isLive"
                                         ]
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 20,
                                     "timeoutSeconds": 1,
                                     "periodSeconds": 10,
                                     "successThreshold": 1,
@@ -587,7 +587,7 @@
                                             "isReady"
                                         ]
                                     },
-                                    "initialDelaySeconds": 15,
+                                    "initialDelaySeconds": 25,
                                     "timeoutSeconds": 2,
                                     "periodSeconds": 20,
                                     "successThreshold": 1,
@@ -599,14 +599,14 @@
                         ],
                         "volumes": [
                             {
-                                "name": "mariadb-data",
+                                "name": "mariadb-${SOURCE_BRANCH}-data",
                                 "emptyDir": {
                                     "medium": ""
                                 }
                             }
                         ],
                         "restartPolicy": "Always",
-                        "terminationGracePeriodSeconds": 30,
+                        "terminationGracePeriodSeconds": 40,
                         "dnsPolicy": "ClusterFirst",
                         "securityContext": {}
                     }
@@ -623,10 +623,10 @@
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "api",
+                "name": "api-${SOURCE_BRANCH}",
                 "generation": 2,
                 "labels": {
-                    "app": "api",
+                    "app": "api-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -653,11 +653,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "api"
+                                "api-${SOURCE_BRANCH}"
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "api:latest"
+                                "name": "api-${SOURCE_BRANCH}:latest"
                             }
                         }
                     },
@@ -668,17 +668,17 @@
                 "replicas": 2,
                 "test": false,
                 "selector": {
-                    "app": "api",
-                    "deploymentconfig": "api"
+                    "app": "api-${SOURCE_BRANCH}",
+                    "deploymentconfig": "api-${SOURCE_BRANCH}"
                 },
                 "template": {
                     "metadata": {
                         "labels": {
-                            "app": "api",
+                            "app": "api-${SOURCE_BRANCH}",
                             "type": "frontend",
                             "provider": "startx",
                             "template": "sxapi-demo-ephemeral-template",
-                            "deploymentconfig": "api"
+                            "deploymentconfig": "api-${SOURCE_BRANCH}"
                         },
                         "annotations": {
                             "openshift.io/generated-by": "STARTX"
@@ -687,7 +687,7 @@
                     "spec": {
                         "containers": [
                             {
-                                "name": "api",
+                                "name": "api-${SOURCE_BRANCH}",
                                 "image": " ",
                                 "env": [
                                     {
@@ -697,6 +697,32 @@
                                     {
                                         "name": "SX_DEBUG",
                                         "value": "true"
+                                    },
+                                    {
+                                        "name": "MARIADB_SERVICE_HOST",
+                                        "value": "mariadb-${SOURCE_BRANCH}"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-${SOURCE_BRANCH}",
+                                                "key": "MYSQL_USER"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "mariadb-${SOURCE_BRANCH}",
+                                                "key": "MYSQL_PASSWORD"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "${MYSQL_DATABASE}"
                                     }
                                 ],
                                 "command": [
@@ -763,10 +789,10 @@
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "www",
+                "name": "www-${SOURCE_BRANCH}",
                 "generation": 2,
                 "labels": {
-                    "app": "www",
+                    "app": "www-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -793,11 +819,11 @@
                         "imageChangeParams": {
                             "automatic": true,
                             "containerNames": [
-                                "www"
+                                "www-${SOURCE_BRANCH}"
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "www:latest"
+                                "name": "www-${SOURCE_BRANCH}:latest"
                             }
                         }
                     },
@@ -808,17 +834,17 @@
                 "replicas": 2,
                 "test": false,
                 "selector": {
-                    "app": "www",
-                    "deploymentconfig": "www"
+                    "app": "www-${SOURCE_BRANCH}",
+                    "deploymentconfig": "www-${SOURCE_BRANCH}"
                 },
                 "template": {
                     "metadata": {
                         "labels": {
-                            "app": "www",
+                            "app": "www-${SOURCE_BRANCH}",
                             "type": "frontend",
                             "provider": "startx",
                             "template": "sxapi-demo-ephemeral-template",
-                            "deploymentconfig": "www"
+                            "deploymentconfig": "www-${SOURCE_BRANCH}"
                         },
                         "annotations": {
                             "openshift.io/generated-by": "STARTX"
@@ -827,7 +853,7 @@
                     "spec": {
                         "containers": [
                             {
-                                "name": "www",
+                                "name": "www-${SOURCE_BRANCH}",
                                 "image": " ",
                                 "env": [
                                     {
@@ -842,7 +868,7 @@
                                         "name": "DEMO_API",
                                         "valueFrom": {
                                             "secretKeyRef": {
-                                                "name": "www",
+                                                "name": "www-${SOURCE_BRANCH}",
                                                 "key": "DEMO_API"
                                             }
                                         }
@@ -912,9 +938,9 @@
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "mariadb",
+                "name": "mariadb-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "mariadb",
+                    "app": "mariadb-${SOURCE_BRANCH}",
                     "type": "backend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -935,8 +961,8 @@
                     }
                 ],
                 "selector": {
-                    "app": "mariadb",
-                    "deploymentconfig": "mariadb"
+                    "app": "mariadb-${SOURCE_BRANCH}",
+                    "deploymentconfig": "mariadb-${SOURCE_BRANCH}"
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
@@ -949,9 +975,44 @@
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "api",
+                "name": "api-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "api",
+                    "app": "api-${SOURCE_BRANCH}",
+                    "type": "frontend",
+                    "provider": "startx",
+                    "template": "sxapi-demo-ephemeral-template"
+                },
+                "annotations": {
+                    "service.alpha.openshift.io/dependencies": "[{\"name\": \"mariadb-${SOURCE_BRANCH}\", \"namespace\": \"\", \"kind\": \"Service\"}]",
+                    "openshift.io/generated-by": "STARTX"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app": "api-${SOURCE_BRANCH}",
+                    "deploymentconfig": "api-${SOURCE_BRANCH}"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "www-${SOURCE_BRANCH}",
+                "labels": {
+                    "app": "www-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -969,42 +1030,8 @@
                     }
                 ],
                 "selector": {
-                    "app": "api",
-                    "deploymentconfig": "api"
-                },
-                "type": "ClusterIP",
-                "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
-            }
-        },
-        {
-            "kind": "Service",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "www",
-                "labels": {
-                    "app": "www",
-                    "type": "frontend",
-                    "provider": "startx",
-                    "template": "sxapi-demo-ephemeral-template"
-                },
-                "annotations": {
-                    "openshift.io/generated-by": "STARTX"
-                }
-            },
-            "spec": {
-                "ports": [
-                    {
-                        "protocol": "TCP",
-                        "port": 8080,
-                        "targetPort": 8080
-                    }
-                ],
-                "selector": {
-                    "app": "www",
-                    "deploymentconfig": "www"
+                    "app": "www-${SOURCE_BRANCH}",
+                    "deploymentconfig": "www-${SOURCE_BRANCH}"
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
@@ -1017,9 +1044,9 @@
             "kind": "Route",
             "apiVersion": "v1",
             "metadata": {
-                "name": "api",
+                "name": "api-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "api",
+                    "app": "api-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -1031,7 +1058,7 @@
             "spec": {
                 "to": {
                     "kind": "Service",
-                    "name": "api",
+                    "name": "api-${SOURCE_BRANCH}",
                     "weight": 100
                 }
             },
@@ -1053,9 +1080,9 @@
             "kind": "Route",
             "apiVersion": "v1",
             "metadata": {
-                "name": "www",
+                "name": "www-${SOURCE_BRANCH}",
                 "labels": {
-                    "app": "www",
+                    "app": "www-${SOURCE_BRANCH}",
                     "type": "frontend",
                     "provider": "startx",
                     "template": "sxapi-demo-ephemeral-template"
@@ -1067,7 +1094,7 @@
             "spec": {
                 "to": {
                     "kind": "Service",
-                    "name": "www",
+                    "name": "www-${SOURCE_BRANCH}",
                     "weight": 100
                 }
             },
@@ -1090,7 +1117,7 @@
         {
             "name": "SOURCE_BRANCH",
             "displayName": "Application source-code branch",
-            "description": "Name of the branch to use for building this application (dev, test, prod)",
+            "description": "Name of the branch to use for building this application (dev, master, test, prod)",
             "value": "test",
             "required": true
         },
