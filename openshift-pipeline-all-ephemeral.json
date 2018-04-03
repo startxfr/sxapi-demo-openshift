@@ -1135,7 +1135,8 @@
                     "template": "sxapi-demo-pipeline-template"
                 },
                 "annotations": {
-                    "openshift.io/generated-by": "STARTX"
+                    "openshift.io/generated-by": "STARTX",
+                    "haproxy.router.openshift.io/balance": "roundrobin"
                 }
             },
             "spec": {
@@ -1172,7 +1173,8 @@
                     "template": "sxapi-demo-pipeline-template"
                 },
                 "annotations": {
-                    "openshift.io/generated-by": "STARTX"
+                    "openshift.io/generated-by": "STARTX",
+                    "haproxy.router.openshift.io/balance": "roundrobin"
                 }
             },
             "spec": {
@@ -2035,7 +2037,8 @@
                     "template": "sxapi-demo-pipeline-template"
                 },
                 "annotations": {
-                    "openshift.io/generated-by": "STARTX"
+                    "openshift.io/generated-by": "STARTX",
+                    "haproxy.router.openshift.io/balance": "roundrobin"
                 }
             },
             "spec": {
@@ -2072,7 +2075,8 @@
                     "template": "sxapi-demo-pipeline-template"
                 },
                 "annotations": {
-                    "openshift.io/generated-by": "STARTX"
+                    "openshift.io/generated-by": "STARTX",
+                    "haproxy.router.openshift.io/balance": "roundrobin"
                 }
             },
             "spec": {

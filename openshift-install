@@ -18,8 +18,9 @@ if [ $? != 0 ]; then
    exit 1;
 fi
 
-export RELEASE=v3.7.2-282e43f
-export INSTALL=/openshift-origin-3.7.2
+export RELEASE=3.9.0
+export PACKAGE=v$RELEASE-191fece
+export INSTALL=/openshift-origin-3.9.0
 
 echo "== Update system"
 yum update -y
@@ -36,19 +37,19 @@ echo "== Start docker daemon"
 systemctl daemon-reload
 systemctl restart docker
 
-echo "== Download openshift origin 3.7.2"
-wget https://github.com/openshift/origin/releases/download/v3.7.2/openshift-origin-server-$RELEASE-linux-64bit.tar.gz
-tar xzvf openshift-origin-server-$RELEASE-linux-64bit.tar.gz
-mv openshift-origin-server-$RELEASE-linux-64bit $INSTALL
-rm -f openshift-origin-server-$RELEASE-linux-64bit.tar.gz
+echo "== Download openshift origin $RELEASE"
+wget https://github.com/openshift/origin/releases/download/v$RELEASE/openshift-origin-server-$PACKAGE-linux-64bit.tar.gz
+tar xzvf openshift-origin-server-$PACKAGE-linux-64bit.tar.gz
+mv openshift-origin-server-$PACKAGE-linux-64bit $INSTALL
+rm -f openshift-origin-server-$PACKAGE-linux-64bit.tar.gz
 cd $INSTALL
 
-echo "== Install openshift origin 3.7.2"
-export PATH=/openshift-origin-3.7.2:$PATH
+echo "== Install openshift origin $RELEASE"
+export PATH=/openshift-origin-$RELEASE:$PATH
 export KUBECONFIG=$INSTALL/openshift.local.config/master/admin.kubeconfig
 export CURL_CA_BUNDLE=$INSTALL/openshift.local.config/master/ca.crt
 sudo chmod +r $INSTALL/openshift.local.config/master/admin.kubeconfig
 
-echo 'export PATH=/openshift-origin-3.7.2:$PATH' >> ~/.bashrc
+echo 'export PATH=/openshift-origin-$RELEASE:$PATH' >> ~/.bashrc
 .  ~/.bashrc
-echo "== End installation of openshift origin 3.7.2"
+echo "== End installation of openshift origin $RELEASE"

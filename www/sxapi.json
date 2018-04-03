@@ -1,7 +1,7 @@
 {
     "name": "sxapi-demo-openshift-test-www",
     "description": "Web frontend application for the sxapi openshift demo (test)",
-    "version": "0.0.10",
+    "version": "0.2.10",
     "debug": true,
     "log": {
         "filters": {
