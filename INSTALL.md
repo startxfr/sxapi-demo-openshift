@@ -92,7 +92,8 @@ yum install -y git
 # ex: export DNSNAME=openshift.demo.startx.fr
 export DNSNAME=<master_domain>
 ```
-- Run the following install script. Adapt the firsts parameters to your needs
+- Run the following install script in order to install a complete installation running openshift origin v3.9.0.
+  This configuration is ephemeral and could not be used in production.
 ```bash
 cd ~
 git clone https://github.com/startxfr/sxapi-demo-openshift.git

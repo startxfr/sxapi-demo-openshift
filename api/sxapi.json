@@ -59,7 +59,7 @@
                 "path": "/",
                 "desc": "display API welcome message",
                 "header": {
-                    "Content-Type": "application/json"
+                    "Content-Type": "text/html"
                 },
                 "body": [
                     "<html>",

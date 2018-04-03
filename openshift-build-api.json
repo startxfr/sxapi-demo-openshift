@@ -344,7 +344,8 @@
                     "template": "sxapi-demo-openshift-api-template"
                 },
                 "annotations": {
-                    "openshift.io/generated-by": "STARTX"
+                    "openshift.io/generated-by": "STARTX",
+                    "haproxy.router.openshift.io/balance": "roundrobin"
                 }
             },
             "spec": {
