@@ -3,7 +3,7 @@
 This section of the [sxapi-demo-openshift](https://github.com/startxfr/sxapi-demo-openshift)
 will show you how to run the sxapi-demo application stack only using docker command.
 
-To run this demo, you must have have a demo environement setup configured. Follow guidelines 
+To run this demo, you must have have a demo environement setup configured. Follow guidelines  
 to configure the [workstation environement](https://github.com/startxfr/sxapi-demo-openshift#setup-workstation-environement).
 
 ## Build images using Dockerfile
