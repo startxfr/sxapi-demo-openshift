@@ -50,6 +50,6 @@ export KUBECONFIG=$INSTALL/openshift.local.config/master/admin.kubeconfig
 export CURL_CA_BUNDLE=$INSTALL/openshift.local.config/master/ca.crt
 sudo chmod +r $INSTALL/openshift.local.config/master/admin.kubeconfig
 
-echo 'export PATH=/openshift-origin-$RELEASE:$PATH' >> ~/.bashrc
+echo "export PATH=/openshift-origin-$RELEASE:$PATH" >> ~/.bashrc
 .  ~/.bashrc
 echo "== End installation of openshift origin $RELEASE"
