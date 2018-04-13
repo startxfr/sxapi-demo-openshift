@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ "$DNSNAME" == "" ]; then
-   echo "please set your domainname using the environent variable DNSNAME (ex: export DNSNAME=my.example.com";
+if [ "$1" == "" ]; then
+   echo "please give the DNS name coresponding to this cluster (ex: openshift.demo.startx.fr)";
    exit 1;
 fi
 if [ "$(id -u)" != "0" ]; then
@@ -8,4 +8,6 @@ if [ "$(id -u)" != "0" ]; then
    exit 1;
 fi
 echo "== Start openshift origin"
-oc cluster up --public-hostname=$DNSNAME
+oc cluster up --logging --metrics --service-catalog  --public-hostname=$1 --routing-suffix=$1
+echo "== Authenticate as administrator in openshift origin"
+oc login -u system:admin
