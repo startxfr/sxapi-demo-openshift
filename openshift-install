@@ -35,7 +35,7 @@ systemctl restart docker
 
 echo "== Download openshift origin $RELEASE"
 wget https://github.com/openshift/origin/releases/download/v$RELEASE/openshift-origin-server-$PACKAGE-linux-64bit.tar.gz
-tar xzvf openshift-origin-server-$PACKAGE-linux-64bit.tar.gz
+tar xzvf openshift-origin-server-$PACKAGE-linux-64bit.tar.gz 2> /dev/null
 mv openshift-origin-server-$PACKAGE-linux-64bit $INSTALL
 rm -f openshift-origin-server-$PACKAGE-linux-64bit.tar.gz
 cd $INSTALL
@@ -44,8 +44,11 @@ echo "== Install openshift origin $RELEASE"
 export PATH=/openshift-origin-$RELEASE:$PATH
 export KUBECONFIG=$INSTALL/openshift.local.config/master/admin.kubeconfig
 export CURL_CA_BUNDLE=$INSTALL/openshift.local.config/master/ca.crt
-sudo chmod +r $KUBECONFIG
+sudo chmod +r $KUBECONFIG 2> /dev/null
 
 echo "export PATH=/openshift-origin-3.9.0:$PATH" >> ~/.bashrc
-.  ~/.bashrc
+exec  ~/.bashrc
 echo "== End installation of openshift origin $RELEASE"
+exit
+sudo su -
+cd ~/sxapi-demo-openshift
