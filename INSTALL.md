@@ -86,12 +86,6 @@ ssh -i <ssh_key> centos@<master_domain>
 sudo su -
 yum install -y git
 ```
-- Setup the DNS used for your demo environement
-```bash
-# <master_domain> your master domain name
-# ex: export DNSNAME=openshift.demo.startx.fr
-export DNSNAME=<master_domain>
-```
 - Run the following install script in order to install a complete installation running openshift origin v3.9.0.
   This configuration is ephemeral and could not be used in production.
 ```bash
@@ -103,14 +97,16 @@ cd sxapi-demo-openshift
 
 - Start the openshift cluster
 ```bash
+# ./openshift-start openshift.demo.startx.fr
 cd ~/sxapi-demo-openshift
-./openshift-start
+./openshift-start <master_domain>
 ```
 
 - Access your web-console using the `https://<master_domain>:8443` URL, where `<master_domain>` is your master domain name (ex: https://openshift.demo.startx.fr:8443).
 - Access openshift cli using
 ```bash
-oc login -u system:admin https://$DNSNAME:8443
+# oc login -u system:admin https://openshift.demo.startx.fr:8443
+oc login -u system:admin https://<master_domain>:8443
 ```
 
 ## Setup Minishift environement
