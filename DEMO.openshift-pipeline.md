@@ -32,7 +32,7 @@ users, network and node allocation.
 ```bash
 oc new-project demo
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-pipeline-all-ephemeral.json \
-           -v DEMO_API=demo.apps.startx.fr \
+           -v DEMO_API=demo.openshift.demo.startx.fr \
            -v MYSQL_USER="demouser" \
            -v MYSQL_PASSWORD="demopwd123" \
            -v MYSQL_DATABASE="demo" | \

@@ -33,7 +33,7 @@ to deploy various stage with the same project (shared namespace) or in different
 oc new-project demo-api
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-all-ephemeral.json \
            -v SOURCE_BRANCH=test \
-           -v DEMO_API=api-demo-api.apps.startx.fr \
+           -v DEMO_API=api-demo-api.openshift.demo.startx.fr \
            -v MYSQL_USER="test-user" \
            -v MYSQL_PASSWORD="test-pwd123" \
            -v MYSQL_DATABASE="demo" | \
