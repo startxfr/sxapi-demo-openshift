@@ -1074,8 +1074,8 @@
         {
             "name": "DEMO_API",
             "displayName": "API fqdn",
-            "description": "Domain name of the API endpoint to use in this frontend (api-xxxxx.apps.startx.fr were xxxxx is your project namespace)",
-            "value": "api-master-demo.apps.startx.fr",
+            "description": "Domain name of the API endpoint to use in this frontend (api-xxxxx.openshift.demo.startx.fr were xxxxx is your project namespace)",
+            "value": "api-master-demo.openshift.demo.startx.fr",
             "required": true
         },
         {
