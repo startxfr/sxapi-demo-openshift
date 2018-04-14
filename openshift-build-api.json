@@ -178,8 +178,6 @@
                 "strategy": {
                     "type": "Rolling",
                     "rollingParams": {
-                        "updatePeriodSeconds": 1,
-                        "intervalSeconds": 1,
                         "timeoutSeconds": 45,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
@@ -290,12 +288,6 @@
                         "securityContext": {}
                     }
                 }
-            },
-            "status": {
-                "observedGeneration": 2,
-                "replicas": 2,
-                "updatedReplicas": 1,
-                "availableReplicas": 1
             }
         },
         {
@@ -327,9 +319,6 @@
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
             }
         },
         {
@@ -354,19 +343,6 @@
                     "name": "${APP_NAME}",
                     "weight": 100
                 }
-            },
-            "status": {
-                "ingress": [
-                    {
-                        "routerName": "router",
-                        "conditions": [
-                            {
-                                "type": "Admitted",
-                                "status": "True"
-                            }
-                        ]
-                    }
-                ]
             }
         }
     ],
