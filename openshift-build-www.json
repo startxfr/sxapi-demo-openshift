@@ -432,7 +432,7 @@
             "name": "DEMO_API",
             "displayName": "API base URL",
             "description": "Domain name of the API endpoint to use in this frontend",
-            "value": "api-prod-demo.apps.startx.fr",
+            "value": "api-prod-demo.openshift.demo.startx.fr",
             "required": true
         },
         {
