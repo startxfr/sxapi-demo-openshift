@@ -453,8 +453,6 @@
                 "strategy": {
                     "type": "Rolling",
                     "rollingParams": {
-                        "updatePeriodSeconds": 1,
-                        "intervalSeconds": 1,
                         "timeoutSeconds": 50,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
@@ -611,12 +609,6 @@
                         "securityContext": {}
                     }
                 }
-            },
-            "status": {
-                "observedGeneration": 2,
-                "replicas": 1,
-                "updatedReplicas": 1,
-                "availableReplicas": 1
             }
         },
         {
@@ -639,9 +631,7 @@
                 "strategy": {
                     "type": "Rolling",
                     "rollingParams": {
-                        "updatePeriodSeconds": 1,
-                        "intervalSeconds": 1,
-                        "timeoutSeconds": 20,
+                        "timeoutSeconds": 30,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
                     },
@@ -751,7 +741,7 @@
                                     },
                                     "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 20,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -761,9 +751,9 @@
                                         "port": 8080,
                                         "scheme": "HTTP"
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 8,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -777,12 +767,6 @@
                         "securityContext": {}
                     }
                 }
-            },
-            "status": {
-                "observedGeneration": 2,
-                "replicas": 2,
-                "updatedReplicas": 1,
-                "availableReplicas": 1
             }
         },
         {
@@ -805,9 +789,7 @@
                 "strategy": {
                     "type": "Rolling",
                     "rollingParams": {
-                        "updatePeriodSeconds": 1,
-                        "intervalSeconds": 1,
-                        "timeoutSeconds": 20,
+                        "timeoutSeconds": 30,
                         "maxUnavailable": "25%",
                         "maxSurge": "25%"
                     },
@@ -900,7 +882,7 @@
                                     },
                                     "initialDelaySeconds": 5,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 20,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -910,9 +892,9 @@
                                         "port": 8080,
                                         "scheme": "HTTP"
                                     },
-                                    "initialDelaySeconds": 10,
+                                    "initialDelaySeconds": 8,
                                     "timeoutSeconds": 1,
-                                    "periodSeconds": 15,
+                                    "periodSeconds": 10,
                                     "successThreshold": 1,
                                     "failureThreshold": 3
                                 },
@@ -926,12 +908,6 @@
                         "securityContext": {}
                     }
                 }
-            },
-            "status": {
-                "observedGeneration": 2,
-                "replicas": 2,
-                "updatedReplicas": 1,
-                "availableReplicas": 1
             }
         },
         {
@@ -966,9 +942,6 @@
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
             }
         },
         {
@@ -1001,9 +974,6 @@
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
             }
         },
         {
@@ -1035,9 +1005,6 @@
                 },
                 "type": "ClusterIP",
                 "sessionAffinity": "None"
-            },
-            "status": {
-                "loadBalancer": {}
             }
         },
         {
@@ -1062,19 +1029,6 @@
                     "name": "api-${SOURCE_BRANCH}",
                     "weight": 100
                 }
-            },
-            "status": {
-                "ingress": [
-                    {
-                        "routerName": "router",
-                        "conditions": [
-                            {
-                                "type": "Admitted",
-                                "status": "True"
-                            }
-                        ]
-                    }
-                ]
             }
         },
         {
@@ -1099,19 +1053,6 @@
                     "name": "www-${SOURCE_BRANCH}",
                     "weight": 100
                 }
-            },
-            "status": {
-                "ingress": [
-                    {
-                        "routerName": "router",
-                        "conditions": [
-                            {
-                                "type": "Admitted",
-                                "status": "True"
-                            }
-                        ]
-                    }
-                ]
             }
         }
     ],
