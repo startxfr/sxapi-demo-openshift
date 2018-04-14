@@ -32,11 +32,11 @@ to deploy various stage with the same project (shared namespace) or in different
 ```bash
 oc new-project demo-api
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-all-ephemeral.json \
-           -v SOURCE_BRANCH=dev \
-           -v DEMO_API=api-demo-api.openshift.demo.startx.fr \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
+           -p SOURCE_BRANCH=dev \
+           -p DEMO_API=api-demo-api.openshift.demo.startx.fr \
+           -p MYSQL_USER="dev-user" \
+           -p MYSQL_PASSWORD="dev-pwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 sleep 5
 oc get all
@@ -54,22 +54,22 @@ You can create and use theses templates running the following commands
 ```bash
 # Create database component objects
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-db-ephemeral.json \
-           -v SOURCE_BRANCH=dev \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
+           -p SOURCE_BRANCH=dev \
+           -p MYSQL_USER="dev-user" \
+           -p MYSQL_PASSWORD="dev-pwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create api frontend component objects
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-api.json \
-           -v SOURCE_BRANCH=dev \
-           -v MYSQL_USER="dev-user" \
-           -v MYSQL_PASSWORD="dev-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
+           -p SOURCE_BRANCH=dev \
+           -p MYSQL_USER="dev-user" \
+           -p MYSQL_PASSWORD="dev-pwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create web frontend component objects
 oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/dev/openshift-build-www.json \
-           -v SOURCE_BRANCH=dev \
-           -v DEMO_API=openshift.demo.startx.fr | \
+           -p SOURCE_BRANCH=dev \
+           -p DEMO_API=openshift.demo.startx.fr | \
 oc create -f -
 sleep 5
 oc get all
