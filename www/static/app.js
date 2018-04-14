@@ -2,7 +2,7 @@
 
 app = {
   config: {
-    apiUrl: "http://api-test.apps.startx.fr/"
+    apiUrl: "http://api-demo.openshift.demo.startx.fr/"
   },
   init: function () {
     $.ajax({method: "GET", url: "/env"})

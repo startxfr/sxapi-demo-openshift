@@ -1995,8 +1995,8 @@
         {
             "name": "DEMO_API",
             "displayName": "API fqdn suffix",
-            "description": "Domain name suffix for the API endpoint to use in this frontend (ex: xxxxx.apps.startx.fr were xxxxx is your project namespace)",
-            "value": "demo.apps.startx.fr",
+            "description": "Domain name suffix for the API endpoint to use in this frontend (ex: xxxxx.openshift.demo.startx.fr were xxxxx is your project namespace)",
+            "value": "demo.openshift.demo.startx.fr",
             "required": true
         },
         {
