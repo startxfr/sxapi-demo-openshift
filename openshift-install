@@ -47,8 +47,8 @@ export CURL_CA_BUNDLE=$INSTALL/openshift.local.config/master/ca.crt
 sudo chmod +r $KUBECONFIG 2> /dev/null
 
 echo "export PATH=$PATH" >> ~/.bashrc
-.  ~/.bashrc
+. ~/.bashrc
 echo "== End installation of openshift origin $RELEASE"
-exit
-sudo su -
-cd ~/sxapi-demo-openshift
+#exit
+#sudo su -
+#cd ~/sxapi-demo-openshift

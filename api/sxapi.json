@@ -1,7 +1,7 @@
 {
     "name": "sxapi-demo-openshift-prod-api",
     "description": "API application for the sxapi openshift demo",
-    "version": "0.1.51",
+    "version": "0.1.52",
     "debug": false,
     "log": {
         "filters": {
