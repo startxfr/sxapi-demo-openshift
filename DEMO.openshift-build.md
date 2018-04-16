@@ -11,7 +11,7 @@ and [openshift environement](https://github.com/startxfr/sxapi-demo-openshift#se
 
 ### Full template
 
-This demo provide an [all-in-one ephemeral template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-all-ephemeral.json)
+This demo provide an [all-in-one ephemeral template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-all-ephemeral.yml)
 to build and deploy the full application stack using build config and deployement config for every services
 part of this example.
 
@@ -31,12 +31,12 @@ to deploy various stage with the same project (shared namespace) or in different
 
 ```bash
 oc new-project demo-api
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-all-ephemeral.json \
-           -v SOURCE_BRANCH=test \
-           -v DEMO_API=api-demo-api.openshift.demo.startx.fr \
-           -v MYSQL_USER="test-user" \
-           -v MYSQL_PASSWORD="test-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
+oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-all-ephemeral.yml \
+           -p SOURCE_BRANCH=dev \
+           -p DEMO_API=api-demo-api.openshift.demo.startx.fr \
+           -p MYSQL_USER="dev-user" \
+           -p MYSQL_PASSWORD="dev-pwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 sleep 5
 oc get all
@@ -45,31 +45,31 @@ oc get all
 ### Single component templates
 
 This demo provide also individual templates to build and deploy the full application stack step by step.
-- [build database template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-db-ephemeral.json),
-- [build api template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-api.json) and
-- [build www template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-www.json)
+- [build database template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-db-ephemeral.yml),
+- [build api template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-api.yml) and
+- [build www template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-www.yml)
 
 You can create and use theses templates running the following commands
 
 ```bash
 # Create database component objects
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-db-ephemeral.json \
-           -v SOURCE_BRANCH=test \
-           -v MYSQL_USER="test-user" \
-           -v MYSQL_PASSWORD="test-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
+oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-db-ephemeral.yml \
+           -p SOURCE_BRANCH=dev \
+           -p MYSQL_USER="dev-user" \
+           -p MYSQL_PASSWORD="dev-pwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create api frontend component objects
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-api.json \
-           -v SOURCE_BRANCH=test \
-           -v MYSQL_USER="test-user" \
-           -v MYSQL_PASSWORD="test-pwd123" \
-           -v MYSQL_DATABASE="demo" | \
+oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-api.yml \
+           -p SOURCE_BRANCH=dev \
+           -p MYSQL_USER="dev-user" \
+           -p MYSQL_PASSWORD="dev-pwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 # Create web frontend component objects
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-www.json \
-           -v SOURCE_BRANCH=test \
-           -v DEMO_API=openshift.demo.startx.fr | \
+oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-build-www.yml \
+           -p SOURCE_BRANCH=dev \
+           -p DEMO_API=openshift.demo.startx.fr | \
 oc create -f -
 sleep 5
 oc get all

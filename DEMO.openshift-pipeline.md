@@ -10,7 +10,7 @@ and [openshift environement](https://github.com/startxfr/sxapi-demo-openshift#se
 
 ## Openshift template
 
-This demo provide an [all-in-one pipeline template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-pipeline-all-ephemeral.json)
+This demo provide an [all-in-one pipeline template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-pipeline-all-ephemeral.yml)
 to build and deploy test and run stagging environement each containing the full application stack.
 
 This template will create the following objects :
@@ -31,11 +31,11 @@ users, network and node allocation.
 
 ```bash
 oc new-project demo
-oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-pipeline-all-ephemeral.json \
-           -v DEMO_API=demo.openshift.demo.startx.fr \
-           -v MYSQL_USER="demouser" \
-           -v MYSQL_PASSWORD="demopwd123" \
-           -v MYSQL_DATABASE="demo" | \
+oc process -f https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/test/openshift-pipeline-all-ephemeral.yml \
+           -p DEMO_API=demo.openshift.demo.startx.fr \
+           -p MYSQL_USER="demouser" \
+           -p MYSQL_PASSWORD="demopwd123" \
+           -p MYSQL_DATABASE="demo" | \
 oc create -f -
 sleep 5
 oc get all
