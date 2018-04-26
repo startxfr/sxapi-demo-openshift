@@ -93,6 +93,7 @@ cd ~
 git clone https://github.com/startxfr/sxapi-demo-openshift.git
 cd sxapi-demo-openshift
 ./openshift-install
+. ~/.bashrc
 ```
 
 - Start the openshift cluster
