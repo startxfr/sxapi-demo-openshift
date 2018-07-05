@@ -1,3 +1,5 @@
 /nbproject
 api/node_modules
 www/node_modules
+*.donotcommit
+no

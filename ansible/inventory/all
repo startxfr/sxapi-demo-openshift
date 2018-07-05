@@ -1,0 +1,11 @@
+## localhost is necessary for working on Cloud provider and setup the host machine
+[localhost]
+localhost ansible_connection=local ansible_python_interpreter=python
+
+#domain-host is set dynamically when getting a new machine on a cloud
+[domain-host]
+#add your known IPs or domain names here
+fab8
+
+[domain-host:vars]
+#cf. group_vars/domain-host.yml
