@@ -1,0 +1,8 @@
+---
+- name: main playbook for sxapi-demo-openshift
+  hosts: domain-host
+  remote_user: "{{ default_user }}"
+  become: true
+  tasks:
+    - name: use the shell script for now
+      script: ../openshift-install
