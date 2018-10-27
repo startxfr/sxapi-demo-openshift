@@ -86,7 +86,7 @@ ssh -i <ssh_key> centos@<master_domain>
 sudo su -
 yum install -y git
 ```
-- Run the following install script in order to install a complete installation running openshift origin v3.9.0.
+- Run the following install script in order to install a complete installation running openshift origin v3.11.0.
   This configuration is ephemeral and could not be used in production.
 ```bash
 cd ~
@@ -115,10 +115,33 @@ oc login -u system:admin https://<master_domain>:8443
 You can then run a simple Openshift environement for developpement purpose.<br>
 Read and follow the [minishift installation guide](https://docs.openshift.org/latest/minishift/getting-started/installing.html) if you want to run this demo into a minishift environement.
 
+## Setup using Ansible
+
+### Setup ansible console
+
+```bash
+yum install -y ansible git
+python -m easy_install pip
+python -m pip install boto boto3
+
+export AWS_ACCESS_KEY_ID=AKIAJ4OT4J2IB3KYOPUQ
+export AWS_SECRET_ACCESS_KEY=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
+
+mkdir /sxapi-demo-openshift
+git clone https://github.com/startxfr/sxapi-demo-openshift.git
+cd /sxapi-demo-openshift/ansible
+
+ansible-playbook ec2_prov.yml
+
+```
+
+
+
+
 ## After installation
 
 Whatever your installation method and your Openshift environement, you must have access to it using oc-cli tools. 
-If you don't have a local openshift client, you can follow [openshift CLI installation guide](https://docs.openshift.com/container-platform/3.9/cli_reference/get_started_cli.html#installing-the-cli).
+If you don't have a local openshift client, you can follow [openshift CLI installation guide](https://docs.openshift.com/container-platform/3.11/cli_reference/get_started_cli.html#installing-the-cli).
 
 You must login to your openshift cluser to start running this demo. After being successfully logged, you can [follow next steps of this demo](README.md)
 ```bash
