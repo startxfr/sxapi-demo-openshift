@@ -14,9 +14,9 @@ if [ $? != 0 ]; then
    exit 1;
 fi
 
-export RELEASE=3.9.0
-export PACKAGE=v$RELEASE-191fece
-export INSTALL=/openshift-origin-3.9.0
+export RELEASE=3.11.0
+export PACKAGE=v$RELEASE-0cbc58b
+export INSTALL=/openshift-origin-3.11.0
 
 echo "== Update system"
 yum update -y
