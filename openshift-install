@@ -24,7 +24,7 @@ yum update -y
 echo "== Install dependencies"
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
-yum install -y --enablerepo=epel wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct atomic docker-1.13.1  ansible pyOpenSSL
+yum install -y --enablerepo=epel wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct atomic docker-1.13.1 ansible pyOpenSSL
 
 echo "== Enable insecure registry"
 echo "{\"insecure-registries\" : [ \"172.30.0.0/16\" ]}" > /etc/docker/daemon.json

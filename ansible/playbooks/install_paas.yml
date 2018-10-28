@@ -1,0 +1,140 @@
+---
+- hosts: master
+  gather_facts: true
+  become: yes
+  
+  pre_tasks:
+    - include_vars: ../config.yml
+
+  tasks:
+    - name: "Check OS distribution is Centos"
+      assert:
+        msg: "OS distribution is not Centos or Redhat Enterprise Linux"
+        that: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - name: "Check OS version is 7"
+      assert:
+        msg: "OS version is not Centos 7 or Redhat Enterprise Linux 7"
+        that: ansible_distribution_major_version == '7'
+    - name: "Get Openshift binary information"
+      stat:
+        path: "/{{ openshift.flavour }}-{{ openshift.release }}/oc"
+      register: ocbin
+    - name: "Define if Openshift client is installed"
+      set_fact:
+        ocInstalled: "{% if ocbin.stat.exists == true and ocbin.stat.executable == true %}true{% else %}false{% endif %}" 
+    - name: "upgrade all packages"
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+      when: ocInstalled == false
+    - name: "install the EPEL repository"
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: present
+        validate_certs: no
+      when: ocInstalled == false
+    - name: "Install tools and dependency packages"
+      yum:
+        name: 
+          - wget
+          - git
+          - net-tools
+          - bind-utils
+          - iptables-services
+          - bridge-utils
+          - bash-completion
+          - kexec-tools
+          - sos
+          - psacct
+          - pyOpenSSL
+          - btrfs-progs
+          - atomic
+          - docker
+          - ansible
+        state: latest
+        disable_gpg_check: yes
+      when: ocInstalled == false
+    - name: "format /dev/xvdb disk"
+      filesystem: 
+        fstype: ext4
+        dev: /dev/xvdb
+        force: yes
+      when: ocInstalled == false
+    - name: "edit fstab and mount the /var/lib/docker"
+      mount: 
+        name: /var/lib/docker
+        state: mounted
+        src: /dev/xvdb
+        fstype: ext4
+      when: ocInstalled == false
+    - name: "Generate docker daemon configuration"
+      template:
+        src: templates/docker-daemon.j2
+        dest: "/etc/docker/daemon.json"
+        mode: 0664
+      when: ocInstalled == false
+    - name: "Reload docker services"
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: docker
+      when: ocInstalled == false
+    - name: "Download Openshift {{ openshift.release }}"
+      unarchive:
+        src: https://github.com/openshift/origin/releases/download/v{{ openshift.release }}/{{ openshift.flavour }}-server-{{ openshift.package }}-linux-64bit.tar.gz
+        dest: /tmp
+        remote_src: yes
+      when: ocInstalled == false
+    - name: "Create Openshift directory /{{ openshift.flavour }}-{{ openshift.release }}"
+      file: 
+        path: /{{ openshift.flavour }}-{{ openshift.release }}
+        state: directory
+      when: ocInstalled == false
+    - name: "Move Openshift binaries to /{{ openshift.flavour }}-{{ openshift.release }}"
+      synchronize: 
+        src: /tmp/{{ openshift.flavour }}-server-{{ openshift.package }}-linux-64bit/
+        dest: /{{ openshift.flavour }}-{{ openshift.release }}
+      delegate_to: "{{ inventory_hostname }}"
+      when: ocInstalled == false
+    - name: "Remove temporary /tmp/{{ openshift.flavour }}-server-{{ openshift.package }}-linux-64bit"
+      file: 
+        path: /tmp/{{ openshift.flavour }}-server-{{ openshift.package }}-linux-64bit
+        state: absent
+      when: ocInstalled == false
+    - name: "Add Openshift to $PATH"
+      lineinfile:
+        line: |
+          export PATH=/{{ openshift.flavour }}-{{ openshift.release }}:$PATH
+          export KUBECONFIG=/{{ openshift.flavour }}-{{ openshift.release }}/openshift.local.config/master/admin.kubeconfig
+          export CURL_CA_BUNDLE=/{{ openshift.flavour }}-{{ openshift.release }}/openshift.local.config/master/ca.crt
+        path: ~/.bashrc
+      when: ocInstalled == false
+    - name: "Start Openshift cluster"
+      shell: "/{{ openshift.flavour }}-{{ openshift.release }}/oc cluster up {{ openshift.options }} --public-hostname=master0.{{ project.name }}.{{ project.dns_zone }} --routing-suffix=apps.{{ project.name }}.{{ project.dns_zone }}"
+      register: ocup
+    - debug: var=ocup
+    - name: "Display installation information"
+      debug:
+        msg: 
+          - "We are happy to report that server master0.{{ project.name }}.{{ project.dns_zone }} is now an Openshift master/compute node."
+          - ""
+          - "Here are some interesting characteristics of the server:"
+          - ""
+          - "  - Full name: master0.{{ project.name }}.{{ project.dns_zone }}"
+          - "  - Type: {{ aws.ec2.instance_type }}"
+          - "  - Region: {{ aws.region }}"
+          - "  - SSH Key: {{ aws.ec2.key_file }}"
+          - "  "
+          - "You can now continue installation by running the install_apps playbook :"
+          - ""
+          - "$ ansible-playbook -i inventory playbooks/install_apps.yml"
+          - "  "
+          - "You can connect to the cluster using openshift client"
+          - ""
+          - "$ oc login -u dev -p dev https://master0.{{ project.name }}.{{ project.dns_zone }}:8443"
+          - "  "
+          - "Or you can connect to the remote host and act as an openshift administrator"
+          - ""
+          - "$ ssh -i {{ aws.ec2.key_file }} {{ aws.ec2.ssh_user }}@master0.{{ project.name }}.{{ project.dns_zone }}"
+          - "$ oc login -u system:admin"

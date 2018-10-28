@@ -1,0 +1,35 @@
+project:
+  name: amue
+  id: demo-amue
+  stage: demo
+  dns_zone: demo.startx.fr
+aws: 
+  region: eu-west-1
+  access_key: XXXXXXXXXXXXXXXXXXX
+  secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  route53: 
+    dns_zone: startx.fr
+    ttl: 30
+  vpc: 
+    cidr_prefix: 172.22
+  ec2: 
+    instance_type: t2.large
+    image: ami-3548444c
+    instance_nb: 1
+    ssh_user: centos
+    key_name: sx-eu-key-demo
+    key_file: ~/sx-eu-key-demo.pem
+    root_disk_size: 12
+    docker_disk_size: 8
+openshift: 
+  release: 3.9.0
+  package: v3.9.0-191fece
+  flavour: openshift-origin
+  options: "--logging --metrics --service-catalog"
+#openshift: 
+#  release: 3.11.0
+#  package: v3.11.0-0cbc58b
+#  flavour: openshift-origin
+#  options: "--base-dir=~/ --skip-registry-check=true --enable=* --enable=automation-service-broker --enable=rhel-imagestreams --enable=service-catalog --enable=template-service-broker"
+  
+  

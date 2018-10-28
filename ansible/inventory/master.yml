@@ -1,0 +1,7 @@
+master:
+  hosts:
+    master0.amue.demo.startx.fr:
+  vars:
+    ansible_connection: ssh
+    ansible_user: centos
+    ansible_ssh_private_key_file: ~/sx-eu-key-demo.pem

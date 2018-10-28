@@ -1,0 +1,126 @@
+---
+### terminate AWS EC/2 instances
+- hosts: master
+  gather_facts: true
+  become: yes
+  
+  pre_tasks:
+    - include_vars: ../config.yml
+
+  tasks:
+    # List all running EC2 project instances
+    - name: "Find EC2 instances ID"
+      ec2_instance_facts:
+        region: "{{ aws.region }}"
+        filters:
+          "tag:Project": "{{ project.name }}"
+          "tag:Stage": "{{ project.stage }}"
+          "instance-state-name": running
+      register: ec2
+
+    # Stop and remove EC2 project instances
+    - name: Terminate instances that were previously launched
+      ec2:
+        region: "{{ aws.region }}"
+        state: 'absent'
+        wait: yes
+        instance_ids: '{{ item.instance_id }}'
+      with_items: "{{  ec2.instances }}"
+
+    # List all project VPC
+    - name: "Find VPC network ID"
+      ec2_vpc_subnet_facts:
+        region: "{{ aws.region }}"
+        filters:
+          "tag:Project": "{{ project.name }}"
+          "tag:Stage": "{{ project.stage }}"
+      register: vpc
+      
+    # List all security group for project VPC
+    - name: "Find Security groups for VPC"
+      ec2_group_facts:
+        region: "{{ aws.region }}"
+        filters:
+          "tag:Project": "{{ project.name }}"
+          "tag:Stage": "{{ project.stage }}"
+      register: vpc_groups
+        
+    # Remove all project security groups
+    - name: "Delete Security group in VPC"
+      ec2_group:
+        region: "{{ aws.region }}"
+        state: absent
+        group_id: "{{ item.group_id }}"
+      with_items: "{{ vpc_groups.security_groups }}"
+      when: vpc_groups.security_groups is defined and (vpc_groups.security_groups | length >  0)
+        
+    # Remove all project VPC
+    - name: "Delete VPC"
+      ec2_vpc:
+        state: absent
+        vpc_id:  "{{ vpc.subnets[0].vpc_id }}"
+        region: "{{ aws.region }}"
+        wait: yes
+        resource_tags: 
+          Name: "{{ project.id }}-vpc"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+      when: vpc_groups.security_groups is defined and (vpc.subnets | length >  0)
+    
+    # Remove DNS public entry
+    - name: Remove public DNS
+      route53:
+        state: absent
+        zone: "{{ aws.route53.dns_zone }}"
+        record: "master{{item.0}}.{{ project.name }}.{{ project.dns_zone }}"
+        type: A
+      with_indexed_items: "{{ ec2.instances }}"
+      
+      
+      
+      
+      
+      
+      
+#      
+#    - name: Debug SERVER
+#      debug:
+#        var: vpc
+#        verbosity: 2
+#        
+#        
+#        
+#        
+#        
+#        
+#    
+#    - name: Delete VPC
+#      ec2_vpc:
+#        state: absent
+#        vpc_id: vpc-aaaaaaa
+#        region: us-west-2
+#        
+#        
+#        
+#    - name: Get EC2 instance IDs
+#      run_once: true
+#      ec2_remote_facts:
+#        filters:
+#          "tag:Type": "{{ ec2_tag_Type }}"
+#          "tag:Role": "{{ ec2_tag_Role }}"
+#        region: "{{ ec2_region }}"
+#      register: instances
+#
+#    - name: display instances
+#      run_once: true
+#      debug:
+#        var: instances
+#
+#    - name: Remove registered instances
+#      run_once: true
+#      ec2:
+#        state: absent
+#        wait: true
+#        instance_ids: "{{instances|json_query('instances[*].id')}}"
+#        region: "{{ ec2_region }}"
+#      when: instances
