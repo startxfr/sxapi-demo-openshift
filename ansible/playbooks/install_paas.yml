@@ -55,19 +55,6 @@
         state: latest
         disable_gpg_check: yes
       when: ocInstalled == false
-    - name: "format /dev/xvdb disk"
-      filesystem: 
-        fstype: ext4
-        dev: /dev/xvdb
-        force: yes
-      when: ocInstalled == false
-    - name: "edit fstab and mount the /var/lib/docker"
-      mount: 
-        name: /var/lib/docker
-        state: mounted
-        src: /dev/xvdb
-        fstype: ext4
-      when: ocInstalled == false
     - name: "Generate docker daemon configuration"
       template:
         src: templates/docker-daemon.j2
@@ -106,8 +93,8 @@
       lineinfile:
         line: |
           export PATH=/{{ openshift.flavour }}-{{ openshift.release }}:$PATH
-          export KUBECONFIG=/{{ openshift.flavour }}-{{ openshift.release }}/openshift.local.config/master/admin.kubeconfig
-          export CURL_CA_BUNDLE=/{{ openshift.flavour }}-{{ openshift.release }}/openshift.local.config/master/ca.crt
+          export KUBECONFIG=/var/lib/origin/openshift.local.config/master/admin.kubeconfig
+          export CURL_CA_BUNDLE=/var/lib/origin/openshift.local.config/master/ca.crt
         path: ~/.bashrc
       when: ocInstalled == false
     - name: "Start Openshift cluster"

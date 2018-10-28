@@ -1,6 +1,6 @@
 master:
   hosts:
-    master0.amue.demo.startx.fr:
+    master0.startx.demo.startx.fr:
   vars:
     ansible_connection: ssh
     ansible_user: centos

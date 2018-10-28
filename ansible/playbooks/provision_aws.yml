@@ -105,12 +105,7 @@
         volumes:
           - device_name: /dev/xvda
             volume_type: gp2
-            volume_size: "{{ aws.ec2.root_disk_size }}"
-            delete_on_termination: true
-          - device_name: /dev/sdb
-            volume_type: io1
-            iops: 100
-            volume_size: "{{ aws.ec2.docker_disk_size }}"
+            volume_size: "{{ aws.ec2.disk_size }}"
             delete_on_termination: true
       register: ec2
     - name: "Register a public DNS"
