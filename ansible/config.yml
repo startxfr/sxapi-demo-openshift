@@ -1,12 +1,12 @@
 project:
-  id: demo-startx
-  name: startx
+  id: demo-tinubu-square
+  name: tinubu-square
   stage: demo
   dns_zone: demo.startx.fr
 aws: 
   region: eu-west-1
-  access_key: XXXXXXXXXXXXXXXXXXX
-  secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  access_key: AKIAJJFM3Z7UTNPKVPLQ
+  secret_key: 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
   route53: 
     dns_zone: startx.fr
     ttl: 30
@@ -19,7 +19,7 @@ aws:
     ssh_user: centos
     key_name: sx-eu-key-demo
     key_file: ~/sx-eu-key-demo.pem
-    disk_size: 15
+    disk_size: 12
 openshift: 
   release: 3.9.0
   package: v3.9.0-191fece
