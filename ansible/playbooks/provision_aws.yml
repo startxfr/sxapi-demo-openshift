@@ -1,0 +1,175 @@
+---
+- hosts: local
+  gather_facts: false
+  
+  pre_tasks:
+    - include_vars: ../config.yml
+  
+  tasks:
+    - name: "Create VPC {{ project.id }}-vpc in {{ aws.region }}"
+      ec2_vpc_net:
+        state: present
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        name: "{{ project.id }}-vpc"
+        cidr_block: "{{ aws.vpc.cidr_prefix }}.0.0/16"
+        resource_tags: 
+          Name: "{{ project.id }}-vpc"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+      register: vpc
+    - name: "Create subnet in {{ project.id }}-vpc"
+      ec2_vpc_subnet:
+        state: present
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: "{{ aws.vpc.cidr_prefix }}.1.0/24"
+        az: "{{ aws.region }}b"
+        region: "{{ aws.region }}"
+        tags:
+          Name: "{{ project.id }}-subnet"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+      register: subnet
+      when: vpc.vpc.id is defined
+    - name: "Create Internet Gateway in {{ project.id }}-vpc"
+      ec2_vpc_igw:
+        state: present
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ aws.region }}"
+        tags:
+          Name: "{{ project.id }}-igw"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+      register: igw
+      when: vpc.vpc.id is defined
+    - name: "Create public route table to subnet in {{ project.id }}-vpc"
+      ec2_vpc_route_table:
+        state: present
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ aws.region }}"
+        tags:
+          Name: "{{ project.id }}-route-public"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+        subnets:
+          - "{{ subnet.subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw.gateway_id }}"
+      register: public_route_table
+      when: vpc.vpc.id is defined
+    - name: "Create security group for {{ project.id }}-vpc in {{ aws.region }}"
+      ec2_group:
+        name: openAll
+        description: security group for project {{ project.name }} ({{ project.stage }})
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ aws.region }}"
+        tags: 
+          Name: "{{ project.id }}-sg-all"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+        rules:
+          - proto: all
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+      register: group
+      when: vpc.vpc.id is defined
+    - name: "Create ec2 instance in {{ aws.region }}"
+      ec2:
+        region: "{{ aws.region }}"
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        instance_type: "{{ aws.ec2.instance_type }}"
+        image: "{{ aws.ec2.image }}"
+        key_name: "{{ aws.ec2.key_name }}"
+        wait: yes
+        wait_timeout: 60
+        count: "{{ aws.ec2.instance_nb }}"
+        group_id: "{{ group.group_id }}"
+        vpc_subnet_id: "{{ subnet.subnet.id }}"
+        assign_public_ip: yes
+        instance_tags: 
+          Name: "{{ project.id }}-master"
+          Project: "{{ project.name }}"
+          Stage: "{{ project.stage }}"
+        volumes:
+          - device_name: /dev/xvda
+            volume_type: gp2
+            volume_size: "{{ aws.ec2.disk_size }}"
+            delete_on_termination: true
+      register: ec2
+    - name: "Register a public DNS"
+      route53:
+        state: present
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        zone: "{{ aws.route53.dns_zone }}"
+        record: "master{{item.0}}.{{ project.name }}.{{ project.dns_zone }}"
+        type: A
+        ttl: "{{ aws.route53.ttl }}"
+        value: "{{ item.1.public_ip }}"
+        wait: yes
+      with_indexed_items: "{{ ec2.instances }}"
+    - name: "Register public DNS wildcard for applications"
+      route53:
+        state: present
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        zone: "{{ aws.route53.dns_zone }}"
+        record: "*.apps.{{ project.name }}.{{ project.dns_zone }}"
+        type: CNAME
+        ttl: "{{ aws.route53.ttl }}"
+        value: "master0.{{ project.name }}.{{ project.dns_zone }}"
+    - name: "Add server to inventory"
+      add_host:
+        hostname: "master{{item.0}}.{{ project.name }}.{{ project.dns_zone }}"
+        groups: master
+        ansible_host: "{{ item.1.public_ip }}"
+      with_indexed_items: "{{ ec2.instances }}"
+    - name: "Wait for the instances to boot by checking the ssh port"
+      wait_for: 
+        host: "{{item.public_ip}}" 
+        port: 22
+        delay: 30
+        sleep: 10
+        timeout: 180
+        state: started
+      with_items: "{{ ec2.instances }}"
+    - name: "Information about EC2 instances"
+      debug:
+        msg: "Instance {{ item.id }} created with ip {{ item.public_ip }}"
+      with_items: "{{ ec2.instances }}"
+    - name: "Generate master inventory"
+      template:
+        src: templates/inventory-master.j2
+        dest: "../inventory/master.yml"
+    - name: "Display provisionning information"
+      debug:
+        msg: 
+          - "We are happy to report that server master0.{{ project.name }}.{{ project.dns_zone }} was successfully provisioned."
+          - ""
+          - "Here are some interesting characteristics of the server:"
+          - ""
+          - "  - Full name: master0.{{ project.name }}.{{ project.dns_zone }}"
+          - "  - IP address: {{ ec2.instances[0].public_ip }}"
+          - "  - Type: {{ aws.ec2.instance_type }}"
+          - "  - Region: {{ aws.region }}"
+          - "  - SSH Key: {{ aws.ec2.key_file }}"
+          - "  "
+          - "You can now continue installation by running the install_paas playbook :"
+          - ""
+          - "$ ansible-playbook -i inventory playbooks/install_paas.yml"
+          - "  "
+          - "Or you can connect to the server instance by running :"
+          - ""
+          - "$ ssh -i {{ aws.ec2.key_file }} {{ aws.ec2.ssh_user }}@master0.{{ project.name }}.{{ project.dns_zone }}"

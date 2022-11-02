@@ -10,7 +10,7 @@ and [openshift environement](https://github.com/startxfr/sxapi-demo-openshift#se
 
 ## Openshift template
 
-This demo provide an [all-in-one pipeline template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/prod/openshift-pipeline-all-ephemeral.yml)
+This demo provide an [all-in-one pipeline template](https://raw.githubusercontent.com/startxfr/sxapi-demo-openshift/master/openshift-pipeline-all-ephemeral.yml)
 to build and deploy test and run stagging environement each containing the full application stack.
 
 This template will create the following objects :

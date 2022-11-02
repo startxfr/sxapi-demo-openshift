@@ -1,0 +1,158 @@
+---
+- hosts: local
+  gather_facts: false
+  
+  pre_tasks:
+    - include_vars: ../config.yml
+
+  tasks:
+
+    - name: "Get Route53 DNS  facts for domain {{ aws.route53.dns_zone }}"
+      route53:
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        state: get
+        zone: "{{ aws.route53.dns_zone }}"
+        record: "master0.{{ project.name }}.{{ project.dns_zone }}"
+        type: A
+      register: route53_facts
+    - name: "Get {{ project.id }}-vpc VPC facts in {{ aws.region }}"
+      ec2_vpc_net_facts:
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        filters:
+          "tag:Name": "{{ project.id }}-vpc"
+          "tag:Project": "{{ project.name }}"
+          "tag:Stage": "{{ project.stage }}"
+      register: libre_vpcs
+    - name: "Get {{ project.id }}-vpc route tables facts"
+      ec2_vpc_route_table_facts:
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        filters:
+          "vpc-id": "{{ libre_vpcs.vpcs[0].id }}"
+      register: libre_routes
+      when:
+        - libre_vpcs.vpcs is defined
+        - libre_vpcs.vpcs | length > 0
+    - name: "Get {{ project.id }}-vpc Subnets facts"
+      ec2_vpc_subnet_facts:
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        filters:
+          "vpc-id": "{{ libre_vpcs.vpcs[0].id }}"
+      when:
+        - libre_vpcs.vpcs is defined
+        - libre_vpcs.vpcs | length > 0
+      register: libre_subnets
+    - name: "Find EC2 instances ID"
+      ec2_instance_facts:
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        filters:
+          "tag:Name": "{{ project.id }}-master"
+          "tag:Project": "{{ project.name }}"
+          "tag:Stage": "{{ project.stage }}"
+          "instance-state-name": running
+      register: ec2inst
+    - name: "Remove public DNS for server"
+      route53:
+        state: absent
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        zone: "{{ aws.route53.dns_zone }}"
+        ttl: "{{ route53_facts.set.ttl | default(30)  }}"
+        record: "{{ route53_facts.set.record | default('master0.'+project.name+'.'+project.dns_zone) }}"
+        value: "{{ route53_facts.set.value | default('')  }}"
+        type: "{{ route53_facts.set.type | default('A')  }}"
+      when:
+        - route53_facts.set is defined
+        - route53_facts.set.type is defined
+    - name: "Remove public DNS wildcard for applications"
+      route53:
+        state: absent
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        zone: "{{ aws.route53.dns_zone }}"
+        ttl: "{{ aws.route53.ttl }}"
+        record: "*.apps.{{ project.name }}.{{ project.dns_zone }}."
+        value: "master0.{{ project.name }}.{{ project.dns_zone }}."
+        type: CNAME
+    - name: "Terminate instances that were previously launched"
+      ec2:
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        state: absent
+        count: 0
+        wait: yes
+        instance_ids: '{{ item.instance_id }}'
+      with_items: "{{  ec2inst.instances }}"
+    - name: "Delete {{ project.id }}-vpc Internet Gateway"
+      ec2_vpc_igw:
+        state: absent
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        vpc_id: "{{ libre_vpcs.vpcs[0].id }}"
+      when:
+        - libre_vpcs.vpcs is defined
+        - libre_vpcs.vpcs | length > 0
+    - name: "Delete {{ project.id }}-vpc subnets"
+      ec2_vpc_subnet:
+        state: absent
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        vpc_id: "{{ libre_vpcs.vpcs[0].id }}"
+        cidr: "{{ item.cidr_block }}"
+        wait: yes
+      with_items: "{{ libre_subnets.subnets }}"
+      when:
+        - libre_subnets.subnets is defined
+        - libre_vpcs.vpcs is defined
+        - libre_vpcs.vpcs | length > 0
+    - name: "Delete {{ project.id }}-vpc routes tables"
+      ec2_vpc_route_table:
+        state: absent
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        vpc_id: "{{ libre_vpcs.vpcs[0].id }}"
+        route_table_id: "{{ item.id }}"
+        lookup: id
+        purge_tags: yes
+      with_items: "{{ libre_routes.route_tables }}"
+      when:
+        - libre_routes.route_tables is defined
+        - libre_vpcs.vpcs is defined
+        - libre_vpcs.vpcs | length > 0
+    - name: "Delete {{ project.id }}-vpc VPC in {{ aws.region }}"
+      ec2_vpc_net:
+        state: absent
+        aws_access_key: "{{ aws.access_key }}"
+        aws_secret_key: "{{ aws.secret_key }}"
+        region: "{{ aws.region }}"
+        name: "{{ project.id }}-vpc"
+        cidr_block: "{{ item.cidr_block }}"
+        purge_cidrs: yes
+      with_items: "{{ libre_vpcs.vpcs }}"
+      when:
+        - libre_vpcs.vpcs is defined
+        - libre_vpcs.vpcs | length > 0
+    - name: "Regenerate master inventory with empty host"
+      template:
+        src: templates/inventory-master.j2
+        dest: "../inventory/master.yml"
+    - name: "Display deprovisionning information"
+      debug:
+        msg: 
+          - "We are happy to report that server master0.{{ project.name }}.{{ project.dns_zone }} was successfully deprovisioned."
+          - ""
+          - "You can provision a new infrastructure with provision_aws playbook :"
+          - ""
+          - "$ ansible-playbook -i inventory playbooks/provision_aws.yml"
