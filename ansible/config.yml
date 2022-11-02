@@ -1,6 +1,6 @@
 project:
-  id: demo-tinubu-square
-  name: tinubu-square
+  id: demo-gpmh
+  name: gpmh
   stage: demo
   dns_zone: demo.startx.fr
 aws: 
